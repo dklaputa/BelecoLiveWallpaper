@@ -1,0 +1,58 @@
+<resources>
+
+    <string name="app_name">Beleco Live Wallpaper</string>
+    <string name="app_setting_title" translatable="false">Beleco</string>
+    <string name="setting_category_1">Preferences</string>
+    <string name="setting1_title">Choose wallpaper</string>
+    <string name="setting1_description">Select a picture to make it your wallpaper</string>
+    <string name="setting1_description_1">Default</string>
+    <string name="setting1_description_2">Custom picture…</string>
+    <string name="setting2_title">Scrolling wallpaper</string>
+    <string name="setting2_on">Scrolling</string>
+    <string name="setting2_off">Non-scrolling</string>
+    <string name="setting4_title">Offset range (Parallax effect)</string>
+    <string name="setting4_description">Change the max offset range.\nNote that a large range may cause wallpaper blurred.</string>
+    <string name="setting5_title">Launcher icon</string>
+    <string name="setting5_on">Show</string>
+    <string name="setting5_off">Hide</string>
+    <string name="setting5_dialog">Beleco will be hidden from launcher. You can reopen the configuration later through your home screen wallpaper picker.\nAre you sure you want to continue?</string>
+    <string name="setting5_dialog_OK">Continue</string>
+    <string name="setting5_dialog_Title">Hide icon</string>
+    <string name="setting6_title">Viscous effect</string>
+    <string name="setting6_description">Set the strength of the viscous effect.</string>
+    <string name="setting_category_2">About</string>
+    <string name="setting3_title" translatable="false">Beleco</string>
+    <string name="setting3_description" translatable="false">by ZHOU DK\nE-mail: D.K.laputa@gmail.com</string>
+    <string name="toast_1">Invalid picture path!</string>
+    <string name="toast_3">Setting completed.</string>
+    <string name="toast_4">Setting failed. Please retry!</string>
+    <string name="toast_2">Couldn\'t launch wallpaper chooser. You can still activate Beleco by choosing \"Live Wallpapers\" in your home screen wallpaper picker.</string>
+    <string name="wallpaper_chooser_dialog">It seems that Beleco isn\'t your current wallpaper. Would you like to set it right now?</string>
+    <string name="wallpaper_chooser_dialog_title">Set wallpaper</string>
+    <string name="dialog_OK">OK</string>
+    <string name="dialog_Cancel">Cancel</string>
+    <string name="menu_1">Set wallpaper</string>
+    <string name="menu_2">Remove ads</string>
+    <string name="about" translatable="false">
+<![CDATA[
+        Made by <b>ZHOU DK</b> in Dec, 2014. <br><br>
+
+        Many thanks to these open source projects:<br><br>
+
+        <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a>&nbsp;</b><br>
+        <i>by Robert Green, Mark F. Guerra, and others</i><br><br>
+
+        <b><a href="https://github.com/jgilfelt/SystemBarTint">SystemBarTint</a>&nbsp;</b><br>
+        <i>by Jeff Gilfelt</i><br><br>
+
+        <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a>&nbsp;</b><br>
+        <i>by Roman Nurik</i><br><br>
+
+        Thanks to this beautiful icon pack:<br><br>
+
+        <b><a href="http://www.elegantthemes.com/blog/freebie-of-the-week/beautiful-flat-icons-for-free/">Beautiful Flat Icons</a>&nbsp;</b><br>
+        <i>by Nick Roach</i><br>
+    ]]>
+    </string>
+
+</resources>

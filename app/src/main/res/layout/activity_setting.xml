@@ -1,0 +1,13 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical" >
+
+    <fragment
+        android:id="@+id/preference_fragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        class="com.mylaputa.beleco.WallpaperPreferenceFragment" />
+
+</RelativeLayout>

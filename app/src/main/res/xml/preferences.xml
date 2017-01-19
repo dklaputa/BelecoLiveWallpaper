@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <PreferenceCategory android:title="@string/setting_category_1" >
+        <Preference
+            android:key="wallpaperPicker"
+            android:summary="@string/setting1_description"
+            android:title="@string/setting1_title" />
+
+        <Preference
+            android:key="offsetRange"
+            android:title="@string/setting4_title" />
+
+        <Preference
+            android:key="delay"
+            android:title="@string/setting6_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="scrollMode"
+            android:summaryOff="@string/setting2_off"
+            android:summaryOn="@string/setting2_on"
+            android:title="@string/setting2_title" />
+
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="showInLauncher"
+            android:summaryOff="@string/setting5_off"
+            android:summaryOn="@string/setting5_on"
+            android:title="@string/setting5_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/setting_category_2" >
+        <Preference
+            android:key="about"
+            android:summary="@string/setting3_description"
+            android:title="@string/setting3_title" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
