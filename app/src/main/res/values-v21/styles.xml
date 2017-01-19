@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="AppTheme" parent="AppBaseTheme">
+        <!-- API 21 theme customizations can go here. -->
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
+
+
 </resources>

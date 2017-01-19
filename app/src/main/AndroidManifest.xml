@@ -1,20 +1,53 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.mylaputa.beleco">
 
+    <uses-feature
+        android:name="android.software.live_wallpaper"
+        android:required="true" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
+
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SettingActivity">
+        <service
+            android:name=".LiveWallpaperService"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_WALLPAPER"
+            android:process=":wallpaper">
+            <intent-filter>
+                <action android:name="android.service.wallpaper.WallpaperService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.service.wallpaper"
+                android:resource="@xml/wallpaper" />
+        </service>
+
+        <activity
+            android:name=".LiveWallPaperPreferenceActivity"
+            android:exported="true"
+            android:launchMode="singleTop" />
+        <activity
+            android:name=".LauncherActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:name=".utils.PreferencesProvider"
+            android:authorities="com.mylaputa.beleco.preferences"
+            android:exported="false" />
+
     </application>
 
 </manifest>

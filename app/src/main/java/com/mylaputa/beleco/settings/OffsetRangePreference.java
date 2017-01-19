@@ -1,189 +1,145 @@
 package com.mylaputa.beleco.settings;
 
-import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.TypedArray;
-import android.os.Parcel;
-import android.os.Parcelable;
-import android.support.annotation.ArrayRes;
-import android.support.annotation.NonNull;
-import android.support.v4.content.res.TypedArrayUtils;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.ListPreference;
-import android.text.TextUtils;
+import android.content.DialogInterface.OnClickListener;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
-public class OffsetRangePreference extends DialogPreference {
-    private CharSequence[] mEntries;
-    private CharSequence[] mEntryValues;
-    private String mValue;
-    private String mSummary;
-    private boolean mValueSet;
+import com.mylaputa.beleco.R;
+import com.mylaputa.beleco.utils.Preferences.Preference;
 
-    public OffsetRangePreference(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
-        TypedArray a = context.obtainStyledAttributes(attrs, android.support.v7.preference.R.styleable.ListPreference, defStyleAttr, defStyleRes);
-        this.mEntries = TypedArrayUtils.getTextArray(a, android.support.v7.preference.R.styleable.ListPreference_entries, android.support.v7.preference.R.styleable.ListPreference_android_entries);
-        this.mEntryValues = TypedArrayUtils.getTextArray(a, android.support.v7.preference.R.styleable.ListPreference_entryValues, android.support.v7.preference.R.styleable.ListPreference_android_entryValues);
-        a.recycle();
-        a = context.obtainStyledAttributes(attrs, android.support.v7.preference.R.styleable.Preference, defStyleAttr, defStyleRes);
-        this.mSummary = TypedArrayUtils.getString(a, android.support.v7.preference.R.styleable.Preference_summary, android.support.v7.preference.R.styleable.Preference_android_summary);
-        a.recycle();
-    }
+class OffsetRangePreference extends MyDialogPreference {
+	private final Context mContext;
+	private int mValue = 2;
 
-    public OffsetRangePreference(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, 0);
-    }
+	public OffsetRangePreference(Context context, AttributeSet attrs) {
+		super(context, attrs);
+		mContext = context;
+		mValue = getPersistedInt(2);
+	}
 
-    public OffsetRangePreference(Context context, AttributeSet attrs) {
-        this(context, attrs, android.support.v7.preference.R.attr.dialogPreferenceStyle);
-    }
+	public OffsetRangePreference(Context context) {
+		this(context, null);
+	}
 
-    public OffsetRangePreference(Context context) {
-        this(context, (AttributeSet)null);
-    }
+	// @Override
+	// public void onActivityDestroy() {
+	// super.onActivityDestroy();
+	// }
 
-    public void setEntries(CharSequence[] entries) {
-        this.mEntries = entries;
-    }
+	/**
+	 * Sets the value of the key. This should be one of the entries in
+	 * {@link #getEntryValues()}.
+	 *
+	 * @param value The value to set for the key.
+	 */
+	public void setValue(int value) {
+		// Always persist/notify the first time.
+		// final boolean changed = (mValue != value);
+		// if (changed) {
+		// mValue = value;
+		persistInt(value);
+		notifyChanged();
+		// }
+	}
 
-    public void setEntries(@ArrayRes int entriesResId) {
-        this.setEntries(this.getContext().getResources().getTextArray(entriesResId));
-    }
+	/**
+	 * Returns the summary of this ListPreference. If the summary has a
+	 * {@linkplain String#format String formatting} marker in it (i.e.
+	 * "%s" or "%1$s"), then the current entry value will be substituted in its
+	 * place.
+	 *
+	 * @return the summary with appropriate string substitution
+	 */
+	@Override
+	public CharSequence getSummary() {
+		return mValue + 1 + "x";
+	}
 
-    public CharSequence[] getEntries() {
-        return this.mEntries;
-    }
+	@Override
+	protected void onPrepareDialogBuilder(Builder builder) {
+		super.onPrepareDialogBuilder(builder);
+		View v = View.inflate(mContext, R.layout.seekbar_preference, null);
+		final TextView textView = (TextView) v.findViewById(R.id.textView);
+		final SeekBar seekBar = (SeekBar) v.findViewById(R.id.seekBar);
+		final TextView messageTextView = (TextView) v
+				.findViewById(R.id.message);
+		messageTextView.setText(R.string.setting4_description);
+		seekBar.setMax(6);
+		seekBar.setProgress(mValue);
+		textView.setText(mValue + 1 + "x");
+		seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
-    public void setEntryValues(CharSequence[] entryValues) {
-        this.mEntryValues = entryValues;
-    }
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
 
-    public void setEntryValues(@ArrayRes int entryValuesResId) {
-        this.setEntryValues(this.getContext().getResources().getTextArray(entryValuesResId));
-    }
+			}
 
-    public CharSequence[] getEntryValues() {
-        return this.mEntryValues;
-    }
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+				// TODO Auto-generated method stub
 
-    public void setValue(String value) {
-        boolean changed = !TextUtils.equals(this.mValue, value);
-        if(changed || !this.mValueSet) {
-            this.mValue = value;
-            this.mValueSet = true;
-            this.persistString(value);
-            if(changed) {
-                this.notifyChanged();
-            }
-        }
+			}
 
-    }
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+										  boolean fromUser) {
+				// TODO Auto-generated method stub
+				textView.setText(progress + 1 + "x");
+			}
+		});
+		builder.setView(v);
+		builder.setPositiveButton(getPositiveButtonText(),
+				new OnClickListener() {
 
-    public CharSequence getSummary() {
-        CharSequence entry = this.getEntry();
-        return (CharSequence)(this.mSummary == null?super.getSummary():String.format(this.mSummary, new Object[]{entry == null?"":entry}));
-    }
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						mValue = seekBar.getProgress();
+						OffsetRangePreference.this.onClick(dialog,
+								DialogInterface.BUTTON_POSITIVE);
+						dialog.dismiss();
+					}
 
-    public void setSummary(CharSequence summary) {
-        super.setSummary(summary);
-        if(summary == null && this.mSummary != null) {
-            this.mSummary = null;
-        } else if(summary != null && !summary.equals(this.mSummary)) {
-            this.mSummary = summary.toString();
-        }
+				});
+	}
 
-    }
+	// @Override
+	// protected void onSetInitialValue(boolean restoreValue, Object
+	// defaultValue) {
+	// // mValue = restoreValue ? getPersistedInt(mValue) : (int) defaultValue;
+	//
+	// mValue = getPersistedInt(2);
+	// }
 
-    public void setValueIndex(int index) {
-        if(this.mEntryValues != null) {
-            this.setValue(this.mEntryValues[index].toString());
-        }
+	@Override
+	protected void onDialogClosed(boolean positiveResult) {
+		super.onDialogClosed(positiveResult);
 
-    }
+		if (positiveResult) {
+			// String value = mResult == 0 ? "default" : "not default";
+			if (callChangeListener(mValue)) {
+				setValue(mValue);
+			}
+		}
+	}
 
-    public String getValue() {
-        return this.mValue;
-    }
+	@Override
+	Uri getUri() {
+		// TODO Auto-generated method stub
+		return Preference.OFFSET_RANGE_URI;
+	}
 
-    public CharSequence getEntry() {
-        int index = this.getValueIndex();
-        return index >= 0 && this.mEntries != null?this.mEntries[index]:null;
-    }
+	@Override
+	String getContentKey() {
+		// TODO Auto-generated method stub
+		return Preference.OFFSET_RANGE;
+	}
 
-    public int findIndexOfValue(String value) {
-        if(value != null && this.mEntryValues != null) {
-            for(int i = this.mEntryValues.length - 1; i >= 0; --i) {
-                if(this.mEntryValues[i].equals(value)) {
-                    return i;
-                }
-            }
-        }
-
-        return -1;
-    }
-
-    private int getValueIndex() {
-        return this.findIndexOfValue(this.mValue);
-    }
-
-    protected Object onGetDefaultValue(TypedArray a, int index) {
-        return a.getString(index);
-    }
-
-    protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
-        this.setValue(restoreValue?this.getPersistedString(this.mValue):(String)defaultValue);
-    }
-
-    protected Parcelable onSaveInstanceState() {
-        Parcelable superState = super.onSaveInstanceState();
-        if(this.isPersistent()) {
-            return superState;
-        } else {
-            OffsetRangePreference.SavedState myState = new OffsetRangePreference.SavedState(superState);
-            myState.value = this.getValue();
-            return myState;
-        }
-    }
-
-    protected void onRestoreInstanceState(Parcelable state) {
-        if(state != null && state.getClass().equals(OffsetRangePreference.SavedState.class)) {
-            OffsetRangePreference.SavedState myState = (OffsetRangePreference.SavedState)state;
-            super.onRestoreInstanceState(myState.getSuperState());
-            this.setValue(myState.value);
-        } else {
-            super.onRestoreInstanceState(state);
-        }
-    }
-
-    private static class SavedState extends BaseSavedState {
-        String value;
-        public static final Creator<OffsetRangePreference.SavedState> CREATOR = new Creator() {
-            public OffsetRangePreference.SavedState createFromParcel(Parcel in) {
-                return new OffsetRangePreference.SavedState(in);
-            }
-
-            public OffsetRangePreference.SavedState[] newArray(int size) {
-                return new OffsetRangePreference.SavedState[size];
-            }
-        };
-
-        public SavedState(Parcel source) {
-            super(source);
-            this.value = source.readString();
-        }
-
-        public void writeToParcel(@NonNull Parcel dest, int flags) {
-            super.writeToParcel(dest, flags);
-            dest.writeString(this.value);
-        }
-
-        public SavedState(Parcelable superState) {
-            super(superState);
-        }
-    }
 }
