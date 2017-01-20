@@ -33,10 +33,9 @@ public class LauncherActivity extends LiveWallPaperPreferenceActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        getSupportActionBar().setIcon(R.mipmap.ic_launcher);
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.mylaputa.beleco.LauncherActivity.finish");
         registerReceiver(broadcastReceiver, filter);

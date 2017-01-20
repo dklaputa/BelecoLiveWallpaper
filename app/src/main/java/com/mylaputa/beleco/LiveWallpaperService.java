@@ -13,27 +13,21 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 
 import com.mylaputa.beleco.LiveWallpaperRenderer.Callbacks;
-import com.mylaputa.beleco.utils.Constant;
 import com.mylaputa.beleco.utils.Preferences.Preference;
 
 import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    public static final int SENSOR_DELAY_US = 66667;
+    public static final int SENSOR_RATE = 15;
     private final static String TAG = "LiveWallpaperService";
-
-    public LiveWallpaperService() {
-        super();
-    }
 
     @Override
     public Engine onCreateEngine() {
-        MyEngine engine = new MyEngine();
-        return engine;
+        return new MyEngine();
     }
 
     class MyEngine extends GLEngine implements SensorEventListener, Callbacks {
@@ -47,6 +41,7 @@ public class LiveWallpaperService extends GLWallpaperService {
         private LiveWallpaperRenderer renderer;
         private SensorManager sensorManager;
 
+        private Timer timer = new Timer();
         // private final Handler mHandler = new Handler();
         // private final Runnable drawTarget = new Runnable() {
         // @Override
@@ -73,7 +68,7 @@ public class LiveWallpaperService extends GLWallpaperService {
             // Get sensormanager and register as listener.
             setEGLContextClientVersion(2);
             setEGLConfigChooser(8, 8, 8, 0, 0, 0);
-            renderer = new LiveWallpaperRenderer(this);
+            renderer = new LiveWallpaperRenderer(LiveWallpaperService.this, this);
             setRenderer(renderer);
             setRenderMode(RENDERMODE_WHEN_DIRTY);
 
@@ -101,15 +96,17 @@ public class LiveWallpaperService extends GLWallpaperService {
                     false, scrollPreferenceObserver);
             Cursor cursor = contentResolver.query(Preference.ALL_URI, null,
                     null, null, null);
-            if (cursor.moveToNext()) {
-                // mySetOffsetNotificationsEnabled(scrollMode);
-                // renderer.setOffset(0.5f, 0.5f);
-                renderer.setIsDefaultWallpaper(cursor.getInt(0));
-                renderer.setBiasRange(cursor.getInt(1));
-                renderer.setDelay(cursor.getInt(2) + 1);
-                renderer.setOffsetMode(!isPreview() && cursor.getInt(3) == 1);
+            if (cursor != null) {
+                if (cursor.moveToNext()) {
+                    // mySetOffsetNotificationsEnabled(scrollMode);
+                    // renderer.setOffset(0.5f, 0.5f);
+                    renderer.setIsDefaultWallpaper(cursor.getInt(0));
+                    renderer.setBiasRange(cursor.getInt(1));
+                    renderer.setDelay(cursor.getInt(2) + 1);
+                    renderer.setOffsetMode(!isPreview() && cursor.getInt(3) == 1);
+                }
+                cursor.close();
             }
-            cursor.close();
             // preferenceObserver.onChange(true);
         }
 
@@ -129,45 +126,24 @@ public class LiveWallpaperService extends GLWallpaperService {
                 renderer.release(); // assuming yours has this method - it
                 // should!
             }
+            super.onDestroy();
+
             System.gc();
             Log.i(TAG, "Destroyed");
-            super.onDestroy();
         }
 
-        // @Override
-        // public void onSurfaceCreated(SurfaceHolder holder) {
-        //
-        // super.onSurfaceCreated(holder);
-        //
-        // }
-
-        @Override
-        public void onSurfaceChanged(SurfaceHolder holder, int format,
-                                     int width, int height) {
-            super.onSurfaceChanged(holder, format, width, height);
-            // onSharedPreferenceChanged(preference, null);
-            Log.d(TAG, "SurfaceChanged, width = " + width + ", height = "
-                    + height + ", designWidth = " + getDesiredMinimumWidth()
-                    + ", designHeight = " + getDesiredMinimumHeight());
+        void startRefresh() {
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    requestRender();
+                }
+            }, 0, 1000 / 60);
         }
 
-        @Override
-        public void onSurfaceDestroyed(SurfaceHolder holder) {
-            super.onSurfaceDestroyed(holder);
-            // mHandler.removeCallbacks(drawTarget);
-            // sensorManager.unregisterListener(this);
-            // renderer.stopTransition();
-            Log.i(TAG, "SurfaceDestroyed");
-            // System.gc();
-        }
-
-        @Override
-        public void onSurfaceCreated(SurfaceHolder holder) {
-            super.onSurfaceCreated(holder);
-            // mHandler.removeCallbacks(drawTarget);
-            // sensorManager.unregisterListener(this);
-            // renderer.stopTransition();
-            Log.i(TAG, "SurfaceCreated");
+        void stopRefresh() {
+            timer.cancel();
+            timer.purge();
         }
 
         @Override
@@ -177,8 +153,8 @@ public class LiveWallpaperService extends GLWallpaperService {
                 sensorManager
                         .registerListener(this, sensorManager
                                         .getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                                SENSOR_DELAY_US);
-                requestRender();
+                                1000000 / SENSOR_RATE);
+                renderer.startTransition();
             } else {
                 Log.i(TAG, "VisibilityFalse");
                 sensorManager.unregisterListener(this);
@@ -192,7 +168,6 @@ public class LiveWallpaperService extends GLWallpaperService {
                                      float xOffsetStep, float yOffsetStep, int xPixelOffset,
                                      int yPixelOffset) {
             // Log.d("offset", xOffset + ", " + xOffsetStep);
-
             renderer.setOffset(xOffset, yOffset);
             // if (scrollStepOld != xOffsetStep) {
             // scrollStepOld = xOffsetStep;
@@ -210,19 +185,11 @@ public class LiveWallpaperService extends GLWallpaperService {
 
         @Override
         public void onSensorChanged(SensorEvent event) {
-            // /renderer.onSensorChanged(event);
             float[] values = event.values;
-
-            if (values[1] != 0 || values[2] != 0) {
-                renderer.setOrientationAngle(values[2], values[1]);
-                // renderer.setTinyOffset((float) (biasRange *
-                // Math.sin(values[2]
-                // * Math.PI / 180)), (float) (-biasRange * Math
-                // .sin(values[1] * Math.PI / 180)));
-                // mHandler.removeCallbacks(drawTarget);
-                // mHandler.post(drawTarget);
-                // requestRender();
-            }
+//        Log.i(TAG,values[1]+" "+values[2]);
+//            if (values[1] != 0 || values[2] != 0) {
+            renderer.setOrientationAngle(values[2], values[1]);
+//            }
         }
 
         // /*
@@ -243,18 +210,6 @@ public class LiveWallpaperService extends GLWallpaperService {
             super.requestRender();
         }
 
-        @Override
-        public InputStream openAssets() throws IOException {
-            // TODO Auto-generated method stub
-            return getAssets().open(Constant.DEFAULT);
-        }
-
-        @Override
-        public InputStream openCustom() throws IOException {
-            // TODO Auto-generated method stub
-            return openFileInput(Constant.CACHE);
-        }
-
         // @TargetApi(15)
         // private void mySetOffsetNotificationsEnabled(boolean scrollMode) {
         // if (Build.VERSION.SDK_INT >= 15)
@@ -263,7 +218,7 @@ public class LiveWallpaperService extends GLWallpaperService {
 
         class WallpaperPreferenceObserver extends ContentObserver {
 
-            public WallpaperPreferenceObserver(Handler handler) {
+            WallpaperPreferenceObserver(Handler handler) {
                 super(handler);
             }
 
@@ -271,16 +226,18 @@ public class LiveWallpaperService extends GLWallpaperService {
             public void onChange(boolean selfChange) {
                 Cursor cursor = contentResolver.query(Preference.WALLPAPER_URI,
                         null, null, null, null);
-                if (cursor.moveToNext()) {
-                    renderer.setIsDefaultWallpaper(cursor.getInt(0));
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        renderer.setIsDefaultWallpaper(cursor.getInt(0));
+                    }
+                    cursor.close();
                 }
-                cursor.close();
             }
         }
 
         class OffsetPreferenceObserver extends ContentObserver {
 
-            public OffsetPreferenceObserver(Handler handler) {
+            OffsetPreferenceObserver(Handler handler) {
                 super(handler);
             }
 
@@ -288,16 +245,18 @@ public class LiveWallpaperService extends GLWallpaperService {
             public void onChange(boolean selfChange) {
                 Cursor cursor = contentResolver.query(
                         Preference.OFFSET_RANGE_URI, null, null, null, null);
-                if (cursor.moveToNext()) {
-                    renderer.setBiasRange(cursor.getInt(0));
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        renderer.setBiasRange(cursor.getInt(0));
+                    }
+                    cursor.close();
                 }
-                cursor.close();
             }
         }
 
         class DelayPreferenceObserver extends ContentObserver {
 
-            public DelayPreferenceObserver(Handler handler) {
+            DelayPreferenceObserver(Handler handler) {
                 super(handler);
             }
 
@@ -305,16 +264,18 @@ public class LiveWallpaperService extends GLWallpaperService {
             public void onChange(boolean selfChange) {
                 Cursor cursor = contentResolver.query(Preference.DELAY_URI,
                         null, null, null, null);
-                if (cursor.moveToNext()) {
-                    renderer.setDelay(cursor.getInt(0) + 1);
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        renderer.setDelay(cursor.getInt(0) + 1);
+                    }
+                    cursor.close();
                 }
-                cursor.close();
             }
         }
 
         class ScrollPreferenceObserver extends ContentObserver {
 
-            public ScrollPreferenceObserver(Handler handler) {
+            ScrollPreferenceObserver(Handler handler) {
                 super(handler);
             }
 
@@ -322,13 +283,13 @@ public class LiveWallpaperService extends GLWallpaperService {
             public void onChange(boolean selfChange) {
                 Cursor cursor = contentResolver.query(
                         Preference.SCROLL_MODE_URI, null, null, null, null);
-                if (cursor.moveToNext()) {
-                    renderer.setOffsetMode(!isPreview()
-                            && cursor.getInt(0) == 1);
-                    // mySetOffsetNotificationsEnabled(scrollMode);
-                    // renderer.setOffset(0.5f, 0.5f);
+                if (cursor != null) {
+                    if (cursor.moveToNext()) {
+                        renderer.setOffsetMode(!isPreview()
+                                && cursor.getInt(0) == 1);
+                    }
+                    cursor.close();
                 }
-                cursor.close();
             }
         }
     }

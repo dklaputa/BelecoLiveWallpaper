@@ -3,6 +3,7 @@
 
     <style name="AppTheme" parent="AppBaseTheme">
         <!-- API 21 theme customizations can go here. -->
+        <!--<item name="android:windowTranslucentNavigation">true</item>-->
         <item name="android:navigationBarColor">@android:color/transparent</item>
     </style>
 

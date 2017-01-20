@@ -1,9 +1,11 @@
 <resources>
 
-    <style name="AppBaseTheme" parent="Theme.AppCompat">
+    <style name="AppBaseTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@color/window_background</item>
+        <item name="android:windowShowWallpaper">true</item>
         <item name="colorPrimaryDark">@color/actionbar_background</item>
         <item name="colorPrimary">@color/actionbar_background</item>
-        <item name="colorAccent">@color/actionbar_background</item>
+        <item name="colorAccent">@color/color_accent</item>
     </style>
 
     <!-- Application theme. -->

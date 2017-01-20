@@ -6,6 +6,7 @@ package com.mylaputa.beleco;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.util.Log;
@@ -26,11 +27,11 @@ public class LiveWallPaperPreferenceActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // if (Build.VERSION.SDK_INT >= 21)
-        // getSupportActionBar().setDisplayShowHomeEnabled(false);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.preferences);
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         final SpannableString spannableString = new SpannableString(
                 getResources().getString(R.string.app_setting_title));
