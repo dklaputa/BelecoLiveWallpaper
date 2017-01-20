@@ -34,7 +34,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
     private float currentOffsetX, currentOffsetY;
     private float orientationOffsetX, orientationOffsetY;
-    private int refreshRate = 95;
+    private int refreshRate = 120;
+    private boolean noScroll = true;
+
     // private int count;
     private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
     private Callbacks mCallbacks;
@@ -46,18 +48,18 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private float scrollRange;
     private boolean scrollMode = true;
     private int delay = 3;
-    // private final float angleRangeS = 45;
-    // private final float angleRangeL = 135;
-    // private String wallpaperPath;
-//    private boolean needsRefreshWallpaper;
-    private int isDefaultWallpaper;
-    private float preA;
     private final Runnable transition = new Runnable() {
         @Override
         public void run() {
             transitionCal();
         }
     };
+    // private final float angleRangeS = 45;
+    // private final float angleRangeL = 135;
+    // private String wallpaperPath;
+    private boolean needsRefreshWallpaper;
+    private int isDefaultWallpaper;
+    private float preA;
     private float preB;
 
     // private int width, height;
@@ -113,11 +115,18 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         // i++;
         // }
         // Log.d("renderer", "onDrawFrame");
+        if (needsRefreshWallpaper) {
+            loadTexture();
+            needsRefreshWallpaper = false;
+            // preCalculate();
+        }
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, currentOffsetX, currentOffsetY, preB, currentOffsetX,
+        Matrix.setLookAtM(mViewMatrix, 0, preA * (-2.0f * scrollOffsetX + 1f)
+                        + currentOffsetX, currentOffsetY, preB, preA * (-2.0f * scrollOffsetX + 1f)
+                        + currentOffsetX,
                 currentOffsetY, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
@@ -166,7 +175,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
         screenAspectRatio = (float) width / (float) height;
         screenH = height;
-        loadTexture();
+        needsRefreshWallpaper = true;
         // preCalculate();
         // aspectRatio = mCallbacks.getWallpaperDesiredAspectRatio();
         // Log.d("renderer", "aspectRatio = " + aspectRatio);
@@ -184,6 +193,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         if (scrollMode) {
             scrollOffsetXDup = offsetX;
             scrollOffsetX = offsetX;
+            noScroll = false;
             //mCallbacks.requestRender();
         } else {
             this.scrollOffsetXDup = offsetX;
@@ -223,7 +233,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     public final void setIsDefaultWallpaper(int isDefault) {
         // Log.d("tinyOffset", tinyOffsetX + ", " + tinyOffsetY);
         isDefaultWallpaper = isDefault;
-        loadTexture();
+        needsRefreshWallpaper = true;
         // mCallbacks.requestRender();
     }
 
@@ -246,22 +256,20 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private void transitionCal() {
         // Log.d("transitionCal", "transition");
         stopTransition();
-        float goalOffsetX = preA * (-2.0f * scrollOffsetX + 1f)
-                + orientationOffsetX;
-        float goalOffsetY = orientationOffsetY;
-        if (Math.abs(currentOffsetX - goalOffsetX) < .000001
-                && Math.abs(currentOffsetY - goalOffsetY) < .000001) {
+        if (noScroll && Math.abs(currentOffsetX - orientationOffsetX) < .001
+                && Math.abs(currentOffsetY - orientationOffsetY) < .001) {
             mHandler.postDelayed(transition, 1000 / refreshRate);
             return;
         }
 //        Log.i(TAG,Math.abs(currentOffsetX - goalOffsetX)+" "+Math.abs(currentOffsetY - goalOffsetY));
-        float tinyOffsetX = (goalOffsetX - currentOffsetX)
+        float tinyOffsetX = (orientationOffsetX - currentOffsetX)
                 / (delay * transitionStep);
-        float tinyOffsetY = (goalOffsetY - currentOffsetY)
+        float tinyOffsetY = (orientationOffsetY - currentOffsetY)
                 / (delay * transitionStep);
         currentOffsetX += tinyOffsetX;
         currentOffsetY += tinyOffsetY;
         mCallbacks.requestRender();
+        noScroll = true;
 
         mHandler.postDelayed(transition, 1000 / refreshRate);
 

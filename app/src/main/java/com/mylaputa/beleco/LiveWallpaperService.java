@@ -1,14 +1,20 @@
 package com.mylaputa.beleco;
 
+import android.annotation.TargetApi;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
@@ -16,9 +22,6 @@ import com.mylaputa.beleco.LiveWallpaperRenderer.Callbacks;
 import com.mylaputa.beleco.utils.Preferences.Preference;
 
 import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
@@ -40,8 +43,8 @@ public class LiveWallpaperService extends GLWallpaperService {
 
         private LiveWallpaperRenderer renderer;
         private SensorManager sensorManager;
+        private BroadcastReceiver powerSaverChangeReceiver;
 
-        private Timer timer = new Timer();
         // private final Handler mHandler = new Handler();
         // private final Runnable drawTarget = new Runnable() {
         // @Override
@@ -107,13 +110,31 @@ public class LiveWallpaperService extends GLWallpaperService {
                 }
                 cursor.close();
             }
-            // preferenceObserver.onChange(true);
+            if (Build.VERSION.SDK_INT >= 21) {
+                powerSaverChangeReceiver = new BroadcastReceiver() {
+                    @TargetApi(21)
+                    @Override
+                    public void onReceive(Context context, Intent intent) {
+                        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+                        if (pm.isPowerSaveMode()) {
+                            renderer.setRefreshRate(15);
+                        } else renderer.setRefreshRate(120);
+                    }
+                };
+
+                IntentFilter filter = new IntentFilter();
+                filter.addAction(PowerManager.ACTION_POWER_SAVE_MODE_CHANGED);
+                registerReceiver(powerSaverChangeReceiver, filter);
+            }
         }
 
         @Override
         public void onDestroy() {
             // Unregister this as listener
             sensorManager.unregisterListener(this);
+            if (Build.VERSION.SDK_INT >= 21) {
+                unregisterReceiver(powerSaverChangeReceiver);
+            }
             // mHandler.removeCallbacks(drawTarget);
             // preference.unregisterOnSharedPreferenceChangeListener(this);
             contentResolver
@@ -130,20 +151,6 @@ public class LiveWallpaperService extends GLWallpaperService {
 
             System.gc();
             Log.i(TAG, "Destroyed");
-        }
-
-        void startRefresh() {
-            timer.scheduleAtFixedRate(new TimerTask() {
-                @Override
-                public void run() {
-                    requestRender();
-                }
-            }, 0, 1000 / 60);
-        }
-
-        void stopRefresh() {
-            timer.cancel();
-            timer.purge();
         }
 
         @Override
