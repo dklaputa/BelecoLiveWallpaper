@@ -25,7 +25,7 @@ import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    public static final int SENSOR_RATE = 15;
+    public static final int SENSOR_RATE = 20;
     private final static String TAG = "LiveWallpaperService";
 
     @Override
@@ -44,25 +44,6 @@ public class LiveWallpaperService extends GLWallpaperService {
         private LiveWallpaperRenderer renderer;
         private SensorManager sensorManager;
         private BroadcastReceiver powerSaverChangeReceiver;
-
-        // private final Handler mHandler = new Handler();
-        // private final Runnable drawTarget = new Runnable() {
-        // @Override
-        // public void run() {
-        // requestRender();
-        // }
-        // };
-
-        // public MyEngine() {
-        // super();
-        // // handle prefs, other initialization
-        // setEGLContextClientVersion(2);
-        // setEGLConfigChooser(8, 8, 8, 0, 0, 0);
-        // renderer = new LiveWallpaperRenderer(this);
-        // setRenderer(renderer);
-        // setRenderMode(RENDERMODE_WHEN_DIRTY);
-        //
-        // }
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
@@ -117,8 +98,8 @@ public class LiveWallpaperService extends GLWallpaperService {
                     public void onReceive(Context context, Intent intent) {
                         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                         if (pm.isPowerSaveMode()) {
-                            renderer.setRefreshRate(15);
-                        } else renderer.setRefreshRate(120);
+                            renderer.setRefreshRate(20);
+                        } else renderer.setRefreshRate(80);
                     }
                 };
 
@@ -174,16 +155,8 @@ public class LiveWallpaperService extends GLWallpaperService {
         public void onOffsetsChanged(float xOffset, float yOffset,
                                      float xOffsetStep, float yOffsetStep, int xPixelOffset,
                                      int yPixelOffset) {
-            // Log.d("offset", xOffset + ", " + xOffsetStep);
             renderer.setOffset(xOffset, yOffset);
-            // if (scrollStepOld != xOffsetStep) {
-            // scrollStepOld = xOffsetStep;
             renderer.setOffsetStep(xOffsetStep, yOffsetStep);
-            // }
-            // Log.i("xOffset", xOffset + "");
-            // mHandler.removeCallbacks(drawTarget);
-            // mHandler.post(drawTarget);
-            // requestRender();
         }
 
         @Override
@@ -193,35 +166,13 @@ public class LiveWallpaperService extends GLWallpaperService {
         @Override
         public void onSensorChanged(SensorEvent event) {
             float[] values = event.values;
-//        Log.i(TAG,values[1]+" "+values[2]);
-//            if (values[1] != 0 || values[2] != 0) {
             renderer.setOrientationAngle(values[2], values[1]);
-//            }
         }
-
-        // /*
-        // * (non-Javadoc)
-        // *
-        // * @see com.glwallpaperservice.testing.wallpapers.nehe.lesson02.
-        // * NeheLesson02Renderer.Callbacks#getWallpaperDesiredMinimumSize()
-        // */
-        // @Override
-        // public float getWallpaperDesiredAspectRatio() {
-        // // TODO Auto-generated method stub
-        // return (float) getWallpaperDesiredMinimumWidth()
-        // / (float) getWallpaperDesiredMinimumHeight();
-        // }
 
         @Override
         public void requestRender() {
             super.requestRender();
         }
-
-        // @TargetApi(15)
-        // private void mySetOffsetNotificationsEnabled(boolean scrollMode) {
-        // if (Build.VERSION.SDK_INT >= 15)
-        // setOffsetNotificationsEnabled(scrollMode);
-        // }
 
         class WallpaperPreferenceObserver extends ContentObserver {
 

@@ -79,7 +79,7 @@ class Wallpaper {
     private int mTileSize = sMaxTextureSize;
     private int[] mTextureHandles;
 
-    public Wallpaper(Bitmap bitmap) {
+    Wallpaper(Bitmap bitmap) {
         if (bitmap == null) {
             return;
         }
@@ -125,64 +125,7 @@ class Wallpaper {
         bitmap.recycle();
     }
 
-    // public Wallpaper(BitmapRegionLoader bitmapRegionLoader, int maxHeight) {
-    // if (bitmapRegionLoader == null || maxHeight == 0) {
-    // return;
-    // }
-    //
-    // mHasContent = true;
-    // mVertexBuffer = GLUtil.newFloatBuffer(mVertices.length);
-    // mTextureCoordsBuffer = GLUtil.asFloatBuffer(SQUARE_TEXTURE_VERTICES);
-    //
-    // int originalWidth = bitmapRegionLoader.getWidth();
-    // int originalHeight = bitmapRegionLoader.getHeight();
-    // int sampleSize = 1;
-    // while (originalHeight / (sampleSize << 1) > maxHeight) {
-    // sampleSize <<= 1;
-    // }
-    //
-    // mWidth = originalWidth / sampleSize;
-    // mHeight = originalHeight / sampleSize;
-    //
-    // mTileSize = Math.min(512, sMaxTextureSize);
-    // int unsampledTileSize = mTileSize * sampleSize;
-    // int leftoverHeight = originalHeight % unsampledTileSize;
-    //
-    // // Load m x n textures
-    // mCols = mWidth / (mTileSize + 1) + 1;
-    // mRows = mHeight / (mTileSize + 1) + 1;
-    //
-    // mTextureHandles = new int[mCols * mRows];
-    //
-    // Bitmap tileBitmap = Bitmap.createBitmap(mTileSize, mTileSize,
-    // Bitmap.Config.ARGB_8888);
-    // Rect rect = new Rect();
-    // BitmapFactory.Options options = new BitmapFactory.Options();
-    // options.inSampleSize = sampleSize;
-    // options.inBitmap = tileBitmap;
-    // for (int y = 0; y < mRows; y++) {
-    // for (int x = 0; x < mCols; x++) {
-    // rect.set(x * unsampledTileSize,
-    // (mRows - y - 1) * unsampledTileSize,
-    // (x + 1) * unsampledTileSize,
-    // (mRows - y) * unsampledTileSize);
-    // // The bottom tiles must be full tiles for drawing, so only allow edge
-    // tiles
-    // // at the top
-    // if (leftoverHeight > 0) {
-    // rect.offset(0, -unsampledTileSize + leftoverHeight);
-    // }
-    // rect.intersect(0, 0, originalWidth, originalHeight);
-    // Bitmap useBitmap = bitmapRegionLoader.decodeRegion(rect, options);
-    // mTextureHandles[y * mCols + x] = GLUtil.loadTexture(useBitmap);
-    // if (useBitmap != tileBitmap) {
-    // useBitmap.recycle();
-    // }
-    // }
-    // }
-    // }
-
-    public static void initGl() {
+    static void initGl() {
         // Initialize shaders and create/link program
         int vertexShaderHandle = GLUtil.loadShader(GLES20.GL_VERTEX_SHADER,
                 VERTEX_SHADER_CODE);
@@ -206,7 +149,7 @@ class Wallpaper {
         sMaxTextureSize = maxTextureSize[0];
     }
 
-    public void draw(float[] mvpMatrix) {
+    void draw(float[] mvpMatrix) {
         if (!mHasContent) {
             return;
         }
@@ -263,7 +206,7 @@ class Wallpaper {
         GLES20.glDisableVertexAttribArray(sAttribTextureCoordsHandle);
     }
 
-    public void destroy() {
+    void destroy() {
         if (mTextureHandles != null) {
             GLES20.glDeleteTextures(mTextureHandles.length, mTextureHandles, 0);
             GLUtil.checkGlError("Destroy picture");

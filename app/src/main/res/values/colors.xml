@@ -3,7 +3,7 @@
 
     <!--   <color name="half_transparent">#E8181818</color>
        <color name="actionbar_background_half_transparent">#44000000</color>-->
-    <color name="window_background">#99000000</color>
-    <color name="actionbar_background">#00000000</color>
+    <color name="window_background">#99232323</color>
+    <color name="actionbar_background">#0000</color>
     <color name="color_accent">#00B1B6</color>
 </resources>

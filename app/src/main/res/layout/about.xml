@@ -13,6 +13,6 @@
         android:paddingTop="5dp"
         android:textAppearance="?android:attr/textAppearance"
         android:textColor="#afff"
-        android:textColorLink="@color/actionbar_background" />
+        android:textColorLink="@color/color_accent" />
 
 </ScrollView>
