@@ -54,8 +54,6 @@ public class LiveWallpaperSettingsFragment extends Fragment {
             }
         });
 
-        view.findViewById(R.id.container).setPadding(0, getStatusBarHeight(), 0, getNavigationBarHeight());
-
         return view;
     }
 
@@ -64,21 +62,4 @@ public class LiveWallpaperSettingsFragment extends Fragment {
         super.onDestroyView();
     }
 
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
-
-    public int getNavigationBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("navigation_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
 }

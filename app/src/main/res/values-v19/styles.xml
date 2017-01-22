@@ -2,5 +2,6 @@
 <resources>
     <style name="AppTheme" parent="AppBaseTheme">
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 </resources>

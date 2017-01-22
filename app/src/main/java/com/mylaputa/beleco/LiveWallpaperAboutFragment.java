@@ -27,14 +27,14 @@ public class LiveWallpaperAboutFragment extends Fragment {
         View view = inflater.inflate(R.layout.about, container, false);
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_arrow_upward));
+        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_arrow_back));
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //What to do on back clicked
+                ((MainActivity) getActivity()).setCurrentPage(0);
             }
         });
-        toolbar.setPadding(0, getStatusBarHeight(), 0, 0);
+
         final TextView aboutTextView = (TextView) view
                 .findViewById(R.id.textView);
         aboutTextView.setTypeface(TypefaceUtil.getAndCache(getContext(),
@@ -56,12 +56,4 @@ public class LiveWallpaperAboutFragment extends Fragment {
         super.onDestroyView();
     }
 
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
-    }
 }

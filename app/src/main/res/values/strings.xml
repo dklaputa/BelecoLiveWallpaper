@@ -35,24 +35,25 @@
     <string name="menu_2">Remove ads</string>
     <string name="menu_3">Select picture</string>
     <string name="about" translatable="false">
-<![CDATA[
-        Beleco Live Wallpaper<br>ver 1.30<br><br>
+        <![CDATA[
+            Beleco Live Wallpaper<br>ver 1.03 - Jan 22, 2017<br><br>
 
-        Made by <b>ZHOU DK</b> in Dec, 2014. <br><br>
+            Made by <b>ZHOU DK</b>.<br>
+            Source code in <a href="https://github.com/dklaputa/BelecoLiveWallpaper">GitHub</a><br><br>
 
-        Many thanks to these open source projects:<br><br>
+            Many thanks to these open source projects:<br><br>
 
-        <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a>&nbsp;</b><br>
-        <i>by Robert Green, Mark F. Guerra, and others</i><br><br>
+            <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a></b><br>
+            <i>by Robert Green, Mark F. Guerra, and others</i><br><br>
 
-        <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a>&nbsp;</b><br>
-        <i>by Roman Nurik</i><br><br>
+            <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a></b><br>
+            <i>by Roman Nurik</i><br><br>
 
-        Thanks to this beautiful icon pack:<br><br>
+            Thanks to this beautiful icon pack:<br><br>
 
-        <b><a href="http://www.elegantthemes.com/blog/freebie-of-the-week/beautiful-flat-icons-for-free/">Beautiful Flat Icons</a>&nbsp;</b><br>
-        <i>by Nick Roach</i><br>
-    ]]>
+            <b><a href="http://www.elegantthemes.com/blog/freebie-of-the-week/beautiful-flat-icons-for-free/">Beautiful Flat Icons</a></b><br>
+            <i>by Nick Roach</i><br>
+        ]]>
     </string>
 
     <string name="range">RANGE</string>
