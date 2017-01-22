@@ -13,6 +13,8 @@ import com.mylaputa.beleco.utils.Constant;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -29,12 +31,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     private Wallpaper wallpaper;
     private float scrollStep = 0f;
-    private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
+    //private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
+    private Queue<Float> scrollOffsetXQueue = new LinkedList<>();
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
+    private float scrollOffsetXBackup = 0.5f;
     private float currentOffsetX, currentOffsetY;
     private float orientationOffsetX, orientationOffsetY;
     private int refreshRate = 60;
-    private boolean noScroll = true;
+//    private boolean noScroll = true;
 
     private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
     private Callbacks mCallbacks;
@@ -62,10 +66,12 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             mHandler.postDelayed(this, timeLeftMillis);
         }
     };
-
+    private boolean needsRefreshWallpaper;
     private int isDefaultWallpaper;
     private float preA;
     private float preB;
+
+//    long timeStamp = 0;
 
     LiveWallpaperRenderer(Context context, Callbacks callbacks) {
 
@@ -108,6 +114,13 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
      */
     @Override
     public void onDrawFrame(GL10 gl) {
+        if (needsRefreshWallpaper) {
+            loadTexture();
+            needsRefreshWallpaper = false;
+        }
+//        long now = System.currentTimeMillis();
+//        Log.i(TAG, 1000 / (now - timeStamp) + "");
+//        timeStamp = now;
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
@@ -160,7 +173,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
         screenAspectRatio = (float) width / (float) height;
         screenH = height;
-        loadTexture();
+        needsRefreshWallpaper = true;
 
         GLES20.glViewport(0, 0, width, height);
 
@@ -173,11 +186,12 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void setOffset(float offsetX, float offsetY) {
         if (scrollMode) {
-            scrollOffsetXDup = offsetX;
-            scrollOffsetX = offsetX;
-            noScroll = false;
+            scrollOffsetXBackup = offsetX;
+            scrollOffsetXQueue.offer(offsetX);
+//            scrollOffsetX = offsetX;
+//            noScroll = false;
         } else {
-            this.scrollOffsetXDup = offsetX;
+            scrollOffsetXBackup = offsetX;
         }
     }
 
@@ -191,10 +205,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     void setOffsetMode(boolean scrollMode) {
         this.scrollMode = scrollMode;
         if (scrollMode)
-            scrollOffsetX = scrollOffsetXDup;
-        else
-            scrollOffsetX = 0.5f;
-        mCallbacks.requestRender();
+//            scrollOffsetX = scrollOffsetXBackup;
+            scrollOffsetXQueue.offer(scrollOffsetXBackup);
+        else {
+//            scrollOffsetX = 0.5f;
+            scrollOffsetXQueue.clear();
+            scrollOffsetXQueue.offer(0.5f);
+        }
+//        noScroll = false;
     }
 
     void setOrientationAngle(float roll, float pitch) {
@@ -204,7 +222,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void setIsDefaultWallpaper(int isDefault) {
         isDefaultWallpaper = isDefault;
-        loadTexture();
+        needsRefreshWallpaper = true;
     }
 
     void setRefreshRate(int refreshRate) {
@@ -226,6 +244,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private void transitionCal() {
         // Log.d("transitionCal", "transition");
 //        stopTransition();
+        boolean needRefresh = false;
         if (Math.abs(currentOffsetX - orientationOffsetX) > .001
                 || Math.abs(currentOffsetY - orientationOffsetY) > .001) {
 //        Log.i(TAG,Math.abs(currentOffsetX - goalOffsetX)+" "+Math.abs(currentOffsetY - goalOffsetY));
@@ -235,12 +254,13 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
                     / (delay * transitionStep);
             currentOffsetX += tinyOffsetX;
             currentOffsetY += tinyOffsetY;
-            mCallbacks.requestRender();
-            noScroll = true;
-        } else if (!noScroll) {
-            mCallbacks.requestRender();
-            noScroll = true;
+            needRefresh = true;
         }
+        if (!scrollOffsetXQueue.isEmpty()) {
+            scrollOffsetX = scrollOffsetXQueue.poll();
+            needRefresh = true;
+        }
+        if (needRefresh) mCallbacks.requestRender();
     }
 
     private void loadTexture() {

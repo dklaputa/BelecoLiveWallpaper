@@ -27,9 +27,7 @@
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/settings_item_vertical_margin"
-                android:layout_marginTop="@dimen/settings_item_vertical_margin">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -44,14 +42,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:max="6"
+                    android:paddingBottom="@dimen/settings_item_vertical_margin"
+                    android:paddingTop="@dimen/settings_item_vertical_margin"
                     android:progress="3" />
             </TableRow>
 
             <TableRow
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/settings_item_vertical_margin"
-                android:layout_marginTop="@dimen/settings_item_vertical_margin">
+                android:layout_height="match_parent">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -66,6 +64,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:max="6"
+                    android:paddingBottom="@dimen/settings_item_vertical_margin"
+                    android:paddingTop="@dimen/settings_item_vertical_margin"
                     android:progress="3" />
 
 

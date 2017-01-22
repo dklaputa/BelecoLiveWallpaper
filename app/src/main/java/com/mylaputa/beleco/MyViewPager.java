@@ -52,8 +52,8 @@ public class MyViewPager extends ViewPager {
                 view.setAlpha(0);
 
             } else if (position <= 1) { // [-1,1]
-                view.setAlpha((float) Math.tan(Math.PI / 4f * (1 - Math.abs(position))));
-
+//                view.setAlpha((float) Math.tan(Math.PI / 4f * (1 - Math.abs(position))));
+                view.setAlpha(1 - Math.abs(position));
             } else { // (1,+Infinity]
                 // This page is way off-screen to the right.
                 view.setAlpha(0);
