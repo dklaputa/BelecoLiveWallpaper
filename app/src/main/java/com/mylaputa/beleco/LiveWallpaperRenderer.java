@@ -33,7 +33,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
     private float currentOffsetX, currentOffsetY;
     private float orientationOffsetX, orientationOffsetY;
-    private int refreshRate = 80;
+    private int refreshRate = 60;
     private boolean noScroll = true;
 
     private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
@@ -50,24 +50,15 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         @Override
         public void run() {
             long beginTimeMillis, timeTakenMillis, timeLeftMillis;
-
-            // get the time before updates/draw
             beginTimeMillis = System.currentTimeMillis();
-
             transitionCal();
-
-            // get the time after processing and calculate the difference
             timeTakenMillis = System.currentTimeMillis() - beginTimeMillis;
-
-            // check how long there is until we reach the desired refresh rate
             timeLeftMillis = (1000L / refreshRate) - timeTakenMillis;
 
             // set some kind of minimum to prevent spinning
             if (timeLeftMillis < 5) {
                 timeLeftMillis = 5; // Set a minimum
             }
-
-            // sleep until the end of the current frame
             mHandler.postDelayed(this, timeLeftMillis);
         }
     };
@@ -121,10 +112,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // Set the camera position (View matrix)
-        Matrix.setLookAtM(mViewMatrix, 0, preA * (-2.0f * scrollOffsetX + 1f)
-                        + currentOffsetX, currentOffsetY, preB, preA * (-2.0f * scrollOffsetX + 1f)
-                        + currentOffsetX,
-                currentOffsetY, 0f, 0f, 1.0f, 0.0f);
+        float x = preA * (-2 * scrollOffsetX + 1) + currentOffsetX;
+        float y = currentOffsetY;
+        Matrix.setLookAtM(mViewMatrix, 0, x, y, preB, x, y, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mMVPMatrix, 0, mProjectionMatrix, 0, mViewMatrix, 0);

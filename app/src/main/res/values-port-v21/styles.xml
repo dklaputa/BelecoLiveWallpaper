@@ -5,6 +5,4 @@
         <!-- API 21 theme customizations can go here. -->
         <item name="android:navigationBarColor">@color/color_toolbar</item>
     </style>
-
-
 </resources>

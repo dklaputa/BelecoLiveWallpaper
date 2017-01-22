@@ -31,19 +31,19 @@
     <string name="wallpaper_chooser_dialog_title">Set wallpaper</string>
     <string name="dialog_OK">OK</string>
     <string name="dialog_Cancel">Cancel</string>
-    <string name="menu_1">Set wallpaper</string>
+    <string name="menu_1">Done</string>
     <string name="menu_2">Remove ads</string>
+    <string name="menu_3">Select picture</string>
     <string name="about" translatable="false">
 <![CDATA[
+        Beleco Live Wallpaper<br>ver 1.30<br><br>
+
         Made by <b>ZHOU DK</b> in Dec, 2014. <br><br>
 
         Many thanks to these open source projects:<br><br>
 
         <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a>&nbsp;</b><br>
         <i>by Robert Green, Mark F. Guerra, and others</i><br><br>
-
-        <b><a href="https://github.com/jgilfelt/SystemBarTint">SystemBarTint</a>&nbsp;</b><br>
-        <i>by Jeff Gilfelt</i><br><br>
 
         <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a>&nbsp;</b><br>
         <i>by Roman Nurik</i><br><br>
@@ -55,4 +55,7 @@
     ]]>
     </string>
 
+    <string name="range">RANGE</string>
+    <string name="delay">SPEED</string>
+    <string name="scroll">Wallpaper scrolling</string>
 </resources>

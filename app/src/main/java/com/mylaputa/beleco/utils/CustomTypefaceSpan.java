@@ -7,10 +7,17 @@ import android.text.style.MetricAffectingSpan;
 
 public class CustomTypefaceSpan extends MetricAffectingSpan {
     private final Typeface typeface;
+    private float textSize = -1;
 
     public CustomTypefaceSpan(final Typeface typeface) {
         super();
         this.typeface = typeface;
+    }
+
+    public CustomTypefaceSpan(final Typeface typeface, float textSize) {
+        super();
+        this.typeface = typeface;
+        this.textSize = textSize;
     }
 
     @Override
@@ -37,5 +44,6 @@ public class CustomTypefaceSpan extends MetricAffectingSpan {
         }
 
         paint.setTypeface(typeface);
+        if (textSize != 1) paint.setTextSize(textSize);
     }
 }

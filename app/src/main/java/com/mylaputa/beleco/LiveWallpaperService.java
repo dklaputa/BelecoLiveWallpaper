@@ -99,7 +99,7 @@ public class LiveWallpaperService extends GLWallpaperService {
                         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                         if (pm.isPowerSaveMode()) {
                             renderer.setRefreshRate(20);
-                        } else renderer.setRefreshRate(80);
+                        } else renderer.setRefreshRate(60);
                     }
                 };
 
