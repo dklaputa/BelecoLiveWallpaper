@@ -26,7 +26,7 @@ import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    public static final int SENSOR_RATE = 40;
+    public static final int SENSOR_RATE = 50;
     private final static String TAG = "LiveWallpaperService";
 
     @Override

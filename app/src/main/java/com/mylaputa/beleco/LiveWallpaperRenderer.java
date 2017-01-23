@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
-import android.os.Handler;
 import android.util.Log;
 
 import com.mylaputa.beleco.utils.Constant;
@@ -16,6 +15,10 @@ import org.apache.commons.collections4.queue.CircularFifoQueue;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -24,13 +27,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final static int REFRESH_RATE = 60;
     private final static float MAX_BIAS_RANGE = 0.005f;
     private final static String TAG = "LiveWallpaperRenderer";
-    private final Handler mHandler = new Handler();
+//    private final Handler mHandler = new Handler();
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
     private final float[] mViewMatrix = new float[16];
     private final Context mContext;
-
+    private final ScheduledExecutorService scheduler =
+            Executors.newScheduledThreadPool(1);
     private Wallpaper wallpaper;
     private float scrollStep = 0f;
     //private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
@@ -39,14 +43,12 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private float scrollOffsetXBackup = 0.5f;
     private float currentOrientationOffsetX, currentOrientationOffsetY;
     private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
-    private float[] orientationOffsetBackup = new float[2];
     //        private float orientationOffsetXBackup, orientationOffsetYBackup;
 //    private int refreshRate = 60;
 //    private boolean noScroll = true;
-
+    private float[] orientationOffsetBackup = new float[2];
     //    private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
     private Callbacks mCallbacks;
-
     private float screenAspectRatio;
     private int screenH;
     private float wallpaperAspectRatio;
@@ -57,19 +59,20 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final Runnable transition = new Runnable() {
         @Override
         public void run() {
-            long beginTime, timeTakenMillis, timeLeftMillis;
-            beginTime = System.nanoTime();
+//            long beginTime, timeTakenMillis, timeLeftMillis;
+//            beginTime = System.nanoTime();
             transitionCal();
-            timeTakenMillis = (System.nanoTime() - beginTime) / 1000000;
-            timeLeftMillis = (1000L / REFRESH_RATE) - timeTakenMillis;
-
-            // set some kind of minimum to prevent spinning
-            if (timeLeftMillis < 5) {
-                timeLeftMillis = 5; // Set a minimum
-            }
-            mHandler.postDelayed(this, timeLeftMillis);
+//            timeTakenMillis = (System.nanoTime() - beginTime) / 1000000;
+//            timeLeftMillis = (1000L / REFRESH_RATE) - timeTakenMillis;
+//
+//            // set some kind of minimum to prevent spinning
+//            if (timeLeftMillis < 5) {
+//                timeLeftMillis = 5; // Set a minimum
+//            }
+//            mHandler.postDelayed(this, timeLeftMillis);
         }
     };
+    private ScheduledFuture<?> transitionHandle;
     private boolean needsRefreshWallpaper;
     private int isDefaultWallpaper;
     private float preA;
@@ -88,7 +91,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         // stopTransition();
         if (wallpaper != null)
             wallpaper.destroy();
-        mHandler.removeCallbacksAndMessages(null);
+//        mHandler.removeCallbacksAndMessages(null);
+        stopTransition();
         mCallbacks = null;
     }
 
@@ -106,11 +110,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void startTransition() {
         stopTransition();
-        mHandler.post(transition);
+//        mHandler.post(transition);
+        transitionHandle =
+                scheduler.scheduleAtFixedRate(transition, 0, 1000 / REFRESH_RATE, TimeUnit.MILLISECONDS);
     }
 
     void stopTransition() {
-        mHandler.removeCallbacks(transition);
+//        mHandler.removeCallbacks(transition);
+        if (transitionHandle != null) transitionHandle.cancel(true);
     }
 
     void clearOrientationOffsetQueue() {
@@ -152,10 +159,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     private void preCalculate() {
         if (scrollStep > 0) {
-            if (wallpaperAspectRatio > (1 + 1 / (2 * scrollStep))
+            if (wallpaperAspectRatio > (1 + 1 / (3 * scrollStep))
                     * screenAspectRatio) {
                 // Log.d(TAG, "11");
-                scrollRange = 1 + 1 / (2 * scrollStep);
+                scrollRange = 1 + 1 / (3 * scrollStep);
             } else if (wallpaperAspectRatio >= screenAspectRatio) {
                 // Log.d(TAG, "12");
                 scrollRange = wallpaperAspectRatio / screenAspectRatio;
