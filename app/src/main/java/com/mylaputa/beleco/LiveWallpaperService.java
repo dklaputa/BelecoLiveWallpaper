@@ -6,6 +6,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.hardware.Sensor;
@@ -25,7 +26,7 @@ import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    public static final int SENSOR_RATE = 20;
+    //    public static final int SENSOR_RATE = 60;
     private final static String TAG = "LiveWallpaperService";
 
     @Override
@@ -44,6 +45,9 @@ public class LiveWallpaperService extends GLWallpaperService {
         private LiveWallpaperRenderer renderer;
         private SensorManager sensorManager;
         private BroadcastReceiver powerSaverChangeReceiver;
+
+        private int sensorFrequency = 40;
+//        private long time;
 
         @Override
         public void onCreate(SurfaceHolder surfaceHolder) {
@@ -98,8 +102,12 @@ public class LiveWallpaperService extends GLWallpaperService {
                     public void onReceive(Context context, Intent intent) {
                         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                         if (pm.isPowerSaveMode()) {
-                            renderer.setRefreshRate(20);
-                        } else renderer.setRefreshRate(60);
+                            changeSensorFrequency(10);
+                            renderer.setRefreshRate(15);
+                        } else {
+                            changeSensorFrequency(40);
+                            renderer.setRefreshRate(60);
+                        }
                     }
                 };
 
@@ -112,7 +120,7 @@ public class LiveWallpaperService extends GLWallpaperService {
         @Override
         public void onDestroy() {
             // Unregister this as listener
-            sensorManager.unregisterListener(this);
+            unregisterSensorListener();
             if (Build.VERSION.SDK_INT >= 21) {
                 unregisterReceiver(powerSaverChangeReceiver);
             }
@@ -138,17 +146,36 @@ public class LiveWallpaperService extends GLWallpaperService {
         public void onVisibilityChanged(boolean visible) {
             if (visible) {
                 Log.i(TAG, "VisibilityTrue");
-                sensorManager
-                        .registerListener(this, sensorManager
-                                        .getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                                1000000 / SENSOR_RATE);
+                registerSensorListener(sensorFrequency);
                 renderer.startTransition();
             } else {
                 Log.i(TAG, "VisibilityFalse");
-                sensorManager.unregisterListener(this);
+                unregisterSensorListener();
                 renderer.stopTransition();
+                renderer.clearOrientationOffsetQueue();
                 // mHandler.removeCallbacks(drawTarget);
             }
+        }
+
+        void changeSensorFrequency(int frequency) {
+            if (isVisible()) {
+                unregisterSensorListener();
+                registerSensorListener(frequency);
+            }
+            sensorFrequency = frequency;
+        }
+
+        void registerSensorListener(int frequency) {
+            Log.i(TAG, "Sensor registered");
+            sensorManager
+                    .registerListener(this, sensorManager
+                                    .getDefaultSensor(Sensor.TYPE_ORIENTATION),
+                            1000000 / frequency);
+        }
+
+        void unregisterSensorListener() {
+            Log.i(TAG, "Sensor unregistered");
+            sensorManager.unregisterListener(this);
         }
 
         @Override
@@ -166,7 +193,14 @@ public class LiveWallpaperService extends GLWallpaperService {
         @Override
         public void onSensorChanged(SensorEvent event) {
             float[] values = event.values;
-            renderer.setOrientationAngle(values[2], values[1]);
+
+//            long ctime = System.currentTimeMillis();
+//            Log.i(TAG, ctime - time + ", " + values[1] + ", " + values[2]);
+//            time = ctime;
+
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                renderer.setOrientationAngle(values[1], -values[2]);
+            else renderer.setOrientationAngle(values[2], values[1]);
         }
 
         @Override

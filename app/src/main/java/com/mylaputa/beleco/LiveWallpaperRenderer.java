@@ -11,16 +11,17 @@ import android.util.Log;
 
 import com.mylaputa.beleco.utils.Constant;
 
+import org.apache.commons.collections4.queue.CircularFifoQueue;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedList;
 import java.util.Queue;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
-    private final static float MAX_BIAS_RANGE = 0.01f;
+    private final static float MAX_BIAS_RANGE = 0.005f;
     private final static String TAG = "LiveWallpaperRenderer";
     private final Handler mHandler = new Handler();
 
@@ -32,15 +33,17 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private Wallpaper wallpaper;
     private float scrollStep = 0f;
     //private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
-    private Queue<Float> scrollOffsetXQueue = new LinkedList<>();
+    private Queue<Float> scrollOffsetXQueue = new CircularFifoQueue<>(10);
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
     private float scrollOffsetXBackup = 0.5f;
-    private float currentOffsetX, currentOffsetY;
-    private float orientationOffsetX, orientationOffsetY;
+    private float currentOrientationOffsetX, currentOrientationOffsetY;
+    private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
+    private float[] orientationOffsetBackup = new float[2];
+    //        private float orientationOffsetXBackup, orientationOffsetYBackup;
     private int refreshRate = 60;
 //    private boolean noScroll = true;
 
-    private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
+    //    private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
     private Callbacks mCallbacks;
 
     private float screenAspectRatio;
@@ -109,6 +112,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         mHandler.removeCallbacks(transition);
     }
 
+    void clearOrientationOffsetQueue() {
+        orientationOffsetQueue.clear();
+    }
+
     /**
      * Here we do our drawing
      */
@@ -125,8 +132,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // Set the camera position (View matrix)
-        float x = preA * (-2 * scrollOffsetX + 1) + currentOffsetX;
-        float y = currentOffsetY;
+        float x = preA * (-2 * scrollOffsetX + 1) + currentOrientationOffsetX;
+        float y = currentOrientationOffsetY;
         Matrix.setLookAtM(mViewMatrix, 0, x, y, preB, x, y, 0f, 0f, 1.0f, 0.0f);
 
         // Calculate the projection and view transformation
@@ -139,10 +146,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     private void preCalculate() {
         if (scrollStep > 0) {
-            if (wallpaperAspectRatio > (1 + 1 / (3 * scrollStep))
+            if (wallpaperAspectRatio > (1 + 1 / (2 * scrollStep))
                     * screenAspectRatio) {
                 // Log.d(TAG, "11");
-                scrollRange = 1 + 1 / (3 * scrollStep);
+                scrollRange = 1 + 1 / (2 * scrollStep);
             } else if (wallpaperAspectRatio >= screenAspectRatio) {
                 // Log.d(TAG, "12");
                 scrollRange = wallpaperAspectRatio / screenAspectRatio;
@@ -216,8 +223,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     }
 
     void setOrientationAngle(float roll, float pitch) {
-        orientationOffsetX = (float) (biasRange * Math.sin(Math.toRadians(roll)));
-        orientationOffsetY = (float) (biasRange * Math.sin(Math.toRadians(pitch)));
+//        orientationOffsetXBackup = (float) (biasRange * Math.sin(Math.toRadians(roll)));
+//        orientationOffsetYBackup = (float) (biasRange * Math.sin(Math.toRadians(pitch)));
+        orientationOffsetQueue.offer(new float[]{(float) (biasRange * Math.sin(Math.toRadians(roll))), (float) (biasRange * Math.sin(Math.toRadians(pitch)))});
     }
 
     void setIsDefaultWallpaper(int isDefault) {
@@ -227,7 +235,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void setRefreshRate(int refreshRate) {
         this.refreshRate = refreshRate;
-        transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
+//        transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
     }
 
     void setBiasRange(int multiples) {
@@ -245,15 +253,19 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         // Log.d("transitionCal", "transition");
 //        stopTransition();
         boolean needRefresh = false;
-        if (Math.abs(currentOffsetX - orientationOffsetX) > .001
-                || Math.abs(currentOffsetY - orientationOffsetY) > .001) {
-//        Log.i(TAG,Math.abs(currentOffsetX - goalOffsetX)+" "+Math.abs(currentOffsetY - goalOffsetY));
-            float tinyOffsetX = (orientationOffsetX - currentOffsetX)
-                    / (delay * transitionStep);
-            float tinyOffsetY = (orientationOffsetY - currentOffsetY)
-                    / (delay * transitionStep);
-            currentOffsetX += tinyOffsetX;
-            currentOffsetY += tinyOffsetY;
+//        Log.i(TAG, orientationOffsetQueue.size() + ", " + scrollOffsetXQueue.size());
+        if (!orientationOffsetQueue.isEmpty()) {
+            orientationOffsetBackup = orientationOffsetQueue.poll();
+        }
+        if (Math.abs(currentOrientationOffsetX - orientationOffsetBackup[0]) > .0001
+                || Math.abs(currentOrientationOffsetY - orientationOffsetBackup[1]) > .0001) {
+//        Log.i(TAG,Math.abs(currentOrientationOffsetX - goalOffsetX)+" "+Math.abs(currentOrientationOffsetY - goalOffsetY));
+            float tinyOffsetX = (orientationOffsetBackup[0] - currentOrientationOffsetX)
+                    / delay;
+            float tinyOffsetY = (orientationOffsetBackup[1] - currentOrientationOffsetY)
+                    / delay;
+            currentOrientationOffsetX += tinyOffsetX;
+            currentOrientationOffsetY += tinyOffsetY;
             needRefresh = true;
         }
         if (!scrollOffsetXQueue.isEmpty()) {
