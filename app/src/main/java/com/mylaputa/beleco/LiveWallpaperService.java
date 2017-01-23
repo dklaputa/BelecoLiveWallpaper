@@ -26,7 +26,7 @@ import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    //    public static final int SENSOR_RATE = 60;
+    public static final int SENSOR_RATE = 40;
     private final static String TAG = "LiveWallpaperService";
 
     @Override
@@ -46,7 +46,8 @@ public class LiveWallpaperService extends GLWallpaperService {
         private SensorManager sensorManager;
         private BroadcastReceiver powerSaverChangeReceiver;
 
-        private int sensorFrequency = 40;
+        //        private int sensorFrequency = 40;
+        private boolean savePowerMode = false;
 //        private long time;
 
         @Override
@@ -102,11 +103,20 @@ public class LiveWallpaperService extends GLWallpaperService {
                     public void onReceive(Context context, Intent intent) {
                         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                         if (pm.isPowerSaveMode()) {
-                            changeSensorFrequency(10);
-                            renderer.setRefreshRate(15);
+                            savePowerMode = true;
+                            if (isVisible()) {
+                                unregisterSensorListener();
+                                renderer.resetOrientationOffset();
+                            }
+//                            changeSensorFrequency(10);
+//                            renderer.setRefreshRate(15);
                         } else {
-                            changeSensorFrequency(40);
-                            renderer.setRefreshRate(60);
+                            savePowerMode = false;
+                            if (isVisible()) {
+                                registerSensorListener();
+                            }
+//                            changeSensorFrequency(40);
+//                            renderer.setRefreshRate(60);
                         }
                     }
                 };
@@ -138,39 +148,41 @@ public class LiveWallpaperService extends GLWallpaperService {
             }
             super.onDestroy();
 
-            System.gc();
+//            System.gc();
             Log.i(TAG, "Destroyed");
         }
 
         @Override
         public void onVisibilityChanged(boolean visible) {
-            if (visible) {
-                Log.i(TAG, "VisibilityTrue");
-                registerSensorListener(sensorFrequency);
-                renderer.startTransition();
-            } else {
-                Log.i(TAG, "VisibilityFalse");
-                unregisterSensorListener();
-                renderer.stopTransition();
-                renderer.clearOrientationOffsetQueue();
-                // mHandler.removeCallbacks(drawTarget);
+            if (!savePowerMode) {
+                if (visible) {
+                    Log.i(TAG, "VisibilityTrue");
+                    registerSensorListener();
+                    renderer.startTransition();
+                } else {
+                    Log.i(TAG, "VisibilityFalse");
+                    unregisterSensorListener();
+                    renderer.stopTransition();
+                    renderer.clearOrientationOffsetQueue();
+                    // mHandler.removeCallbacks(drawTarget);
+                }
             }
         }
 
-        void changeSensorFrequency(int frequency) {
-            if (isVisible()) {
-                unregisterSensorListener();
-                registerSensorListener(frequency);
-            }
-            sensorFrequency = frequency;
-        }
+//        void changeSensorFrequency(int frequency) {
+//            if (isVisible()) {
+//                unregisterSensorListener();
+//                registerSensorListener(frequency);
+//            }
+//            sensorFrequency = frequency;
+//        }
 
-        void registerSensorListener(int frequency) {
+        void registerSensorListener() {
             Log.i(TAG, "Sensor registered");
             sensorManager
                     .registerListener(this, sensorManager
                                     .getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                            1000000 / frequency);
+                            1000000 / SENSOR_RATE);
         }
 
         void unregisterSensorListener() {

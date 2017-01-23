@@ -21,6 +21,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
 class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
+    private final static int REFRESH_RATE = 60;
     private final static float MAX_BIAS_RANGE = 0.005f;
     private final static String TAG = "LiveWallpaperRenderer";
     private final Handler mHandler = new Handler();
@@ -40,7 +41,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
     private float[] orientationOffsetBackup = new float[2];
     //        private float orientationOffsetXBackup, orientationOffsetYBackup;
-    private int refreshRate = 60;
+//    private int refreshRate = 60;
 //    private boolean noScroll = true;
 
     //    private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
@@ -56,11 +57,11 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final Runnable transition = new Runnable() {
         @Override
         public void run() {
-            long beginTimeMillis, timeTakenMillis, timeLeftMillis;
-            beginTimeMillis = System.currentTimeMillis();
+            long beginTime, timeTakenMillis, timeLeftMillis;
+            beginTime = System.nanoTime();
             transitionCal();
-            timeTakenMillis = System.currentTimeMillis() - beginTimeMillis;
-            timeLeftMillis = (1000L / refreshRate) - timeTakenMillis;
+            timeTakenMillis = (System.nanoTime() - beginTime) / 1000000;
+            timeLeftMillis = (1000L / REFRESH_RATE) - timeTakenMillis;
 
             // set some kind of minimum to prevent spinning
             if (timeLeftMillis < 5) {
@@ -114,6 +115,11 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void clearOrientationOffsetQueue() {
         orientationOffsetQueue.clear();
+    }
+
+    void resetOrientationOffset() {
+        clearOrientationOffsetQueue();
+        orientationOffsetQueue.offer(new float[]{0, 0});
     }
 
     /**
@@ -233,10 +239,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         needsRefreshWallpaper = true;
     }
 
-    void setRefreshRate(int refreshRate) {
-        this.refreshRate = refreshRate;
-//        transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
-    }
+//    void setRefreshRate(int refreshRate) {
+//        this.refreshRate = refreshRate;
+////        transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
+//    }
 
     void setBiasRange(int multiples) {
         // Log.d("tinyOffset", tinyOffsetX + ", " + tinyOffsetY);
@@ -301,7 +307,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             }
 
         }
-        System.gc();
+//        System.gc();
         Log.d(TAG, "loadTexture");
     }
 
