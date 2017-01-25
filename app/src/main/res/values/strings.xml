@@ -59,4 +59,5 @@
     <string name="range">RANGE</string>
     <string name="delay">SPEED</string>
     <string name="scroll">Wallpaper scrolling</string>
+    <string name="power_save">Pause in battery saver mode</string>
 </resources>

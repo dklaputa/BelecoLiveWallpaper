@@ -1,5 +1,6 @@
 package com.mylaputa.beleco;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.TableLayout;
 
 import com.mylaputa.beleco.utils.CustomTypefaceSpan;
 import com.mylaputa.beleco.utils.TypefaceUtil;
@@ -53,7 +56,15 @@ public class LiveWallpaperSettingsFragment extends Fragment {
                 return false;
             }
         });
-
+        if (Build.VERSION.SDK_INT >= 21) {
+            TableLayout table = (TableLayout) view.findViewById(R.id.table);
+            CheckBox powerSaver = new CheckBox(getContext());
+            powerSaver.setText(R.string.power_save);
+            powerSaver.setChecked(true);
+            table.addView(powerSaver);
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) powerSaver.getLayoutParams();
+            marginParams.setMargins(0, (int) (getResources().getDimension(R.dimen.settings_item_vertical_margin) / getResources().getDisplayMetrics().density), 0, (int) (getResources().getDimension(R.dimen.settings_item_vertical_margin) / getResources().getDisplayMetrics().density));
+        }
         return view;
     }
 

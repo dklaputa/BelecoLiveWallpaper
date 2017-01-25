@@ -9,24 +9,20 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.ContentObserver;
 import android.database.Cursor;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.mylaputa.beleco.LiveWallpaperRenderer.Callbacks;
+import com.mylaputa.beleco.sensor.RotationSensor;
 import com.mylaputa.beleco.utils.Preferences.Preference;
 
 import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
 public class LiveWallpaperService extends GLWallpaperService {
 
-    public static final int SENSOR_RATE = 50;
+    public static final int SENSOR_RATE = 60;
     private final static String TAG = "LiveWallpaperService";
 
     @Override
@@ -34,7 +30,8 @@ public class LiveWallpaperService extends GLWallpaperService {
         return new MyEngine();
     }
 
-    class MyEngine extends GLEngine implements SensorEventListener, Callbacks {
+
+    class MyEngine extends GLEngine implements LiveWallpaperRenderer.Callbacks, RotationSensor.Callback {
         // private SharedPreferences preference;
         private ContentResolver contentResolver;
         private WallpaperPreferenceObserver wallpaperPreferenceObserver;
@@ -43,7 +40,7 @@ public class LiveWallpaperService extends GLWallpaperService {
         private ScrollPreferenceObserver scrollPreferenceObserver;
 
         private LiveWallpaperRenderer renderer;
-        private SensorManager sensorManager;
+        private RotationSensor rotationSensor;
         private BroadcastReceiver powerSaverChangeReceiver;
 
         //        private int sensorFrequency = 40;
@@ -61,7 +58,8 @@ public class LiveWallpaperService extends GLWallpaperService {
             setRenderer(renderer);
             setRenderMode(RENDERMODE_WHEN_DIRTY);
 
-            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            rotationSensor = new RotationSensor(this, SENSOR_RATE);
+//            sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             // preference = LiveWallpaperService.this.getSharedPreferences(
             // Constant.SHARED_PREFS_NAME, MODE_PRIVATE);
             // preference.registerOnSharedPreferenceChangeListener(this);
@@ -105,15 +103,15 @@ public class LiveWallpaperService extends GLWallpaperService {
                         if (pm.isPowerSaveMode()) {
                             savePowerMode = true;
                             if (isVisible()) {
-                                unregisterSensorListener();
-                                renderer.resetOrientationOffset();
+                                rotationSensor.unrigister();
+                                renderer.setOrientationAngle(0, 0);
                             }
 //                            changeSensorFrequency(10);
 //                            renderer.setRefreshRate(15);
                         } else {
                             savePowerMode = false;
                             if (isVisible()) {
-                                registerSensorListener();
+                                rotationSensor.register();
                             }
 //                            changeSensorFrequency(40);
 //                            renderer.setRefreshRate(60);
@@ -130,7 +128,7 @@ public class LiveWallpaperService extends GLWallpaperService {
         @Override
         public void onDestroy() {
             // Unregister this as listener
-            unregisterSensorListener();
+            rotationSensor.unrigister();
             if (Build.VERSION.SDK_INT >= 21) {
                 unregisterReceiver(powerSaverChangeReceiver);
             }
@@ -157,13 +155,13 @@ public class LiveWallpaperService extends GLWallpaperService {
             if (!savePowerMode) {
                 if (visible) {
                     Log.i(TAG, "VisibilityTrue");
-                    registerSensorListener();
+                    rotationSensor.register();
                     renderer.startTransition();
                 } else {
                     Log.i(TAG, "VisibilityFalse");
-                    unregisterSensorListener();
+                    rotationSensor.unrigister();
                     renderer.stopTransition();
-                    renderer.clearOrientationOffsetQueue();
+//                    renderer.clearOrientationOffsetQueue();
                     // mHandler.removeCallbacks(drawTarget);
                 }
             }
@@ -177,47 +175,45 @@ public class LiveWallpaperService extends GLWallpaperService {
 //            sensorFrequency = frequency;
 //        }
 
-        void registerSensorListener() {
-            Log.i(TAG, "Sensor registered");
-            sensorManager
-                    .registerListener(this, sensorManager
-                                    .getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                            1000000 / SENSOR_RATE);
-        }
-
-        void unregisterSensorListener() {
-            Log.i(TAG, "Sensor unregistered");
-            sensorManager.unregisterListener(this);
-        }
+//        void registerSensorListener() {
+//            Log.i(TAG, "Sensor registered");
+//            sensorManager
+//                    .registerListener(this, sensorManager
+//                                    .getDefaultSensor(Sensor.TYPE_ORIENTATION),
+//                            1000000 / SENSOR_RATE);
+//        }
+//
+//        void unregisterSensorListener() {
+//            Log.i(TAG, "Sensor unregistered");
+//            sensorManager.unregisterListener(this);
+//        }
 
         @Override
         public void onOffsetsChanged(float xOffset, float yOffset,
                                      float xOffsetStep, float yOffsetStep, int xPixelOffset,
                                      int yPixelOffset) {
-            renderer.setOffset(xOffset, yOffset);
-            renderer.setOffsetStep(xOffsetStep, yOffsetStep);
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        }
-
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            float[] values = event.values;
-
-//            long ctime = System.currentTimeMillis();
-//            Log.i(TAG, ctime - time + ", " + values[1] + ", " + values[2]);
-//            time = ctime;
-
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
-                renderer.setOrientationAngle(values[1], -values[2]);
-            else renderer.setOrientationAngle(values[2], values[1]);
+//            Log.i(TAG, xOffset + "," + yOffset + "," + xOffsetStep + "," + yOffsetStep);
+            if (!isPreview()) {
+                renderer.setOffset(xOffset, yOffset);
+                renderer.setOffsetStep(xOffsetStep, yOffsetStep);
+            }
         }
 
         @Override
         public void requestRender() {
             super.requestRender();
+        }
+
+        @Override
+        public void setOrientationAngle(float[] values) {
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)
+                renderer.setOrientationAngle(values[1], values[2]);
+            else renderer.setOrientationAngle(-values[2], values[1]);
+        }
+
+        @Override
+        public Context getContext() {
+            return LiveWallpaperService.this;
         }
 
         class WallpaperPreferenceObserver extends ContentObserver {

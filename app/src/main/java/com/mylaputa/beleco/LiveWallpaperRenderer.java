@@ -25,7 +25,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final static int REFRESH_RATE = 60;
-    private final static float MAX_BIAS_RANGE = 0.005f;
+    private final static float MAX_BIAS_RANGE = 0.003f;
     private final static String TAG = "LiveWallpaperRenderer";
 //    private final Handler mHandler = new Handler();
 
@@ -35,6 +35,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final Context mContext;
     private final ScheduledExecutorService scheduler =
             Executors.newScheduledThreadPool(1);
+    private final float transitionStep = REFRESH_RATE / LiveWallpaperService.SENSOR_RATE;
     private Wallpaper wallpaper;
     private float scrollStep = 0f;
     //private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
@@ -42,12 +43,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
     private float scrollOffsetXBackup = 0.5f;
     private float currentOrientationOffsetX, currentOrientationOffsetY;
-    private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
-    //        private float orientationOffsetXBackup, orientationOffsetYBackup;
-//    private int refreshRate = 60;
-//    private boolean noScroll = true;
-    private float[] orientationOffsetBackup = new float[2];
-    //    private float transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
+    //    private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
+    private float orientationOffsetX, orientationOffsetY;
     private Callbacks mCallbacks;
     private float screenAspectRatio;
     private int screenH;
@@ -120,14 +117,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         if (transitionHandle != null) transitionHandle.cancel(true);
     }
 
-    void clearOrientationOffsetQueue() {
-        orientationOffsetQueue.clear();
-    }
-
-    void resetOrientationOffset() {
-        clearOrientationOffsetQueue();
-        orientationOffsetQueue.offer(new float[]{0, 0});
-    }
+//    void clearOrientationOffsetQueue() {
+//        orientationOffsetQueue.clear();
+//    }
+//
+//    void resetOrientationOffset() {
+//        clearOrientationOffsetQueue();
+//        orientationOffsetQueue.offer(new float[]{0, 0});
+//    }
 
     /**
      * Here we do our drawing
@@ -139,7 +136,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             needsRefreshWallpaper = false;
         }
 //        long now = System.currentTimeMillis();
-//        Log.i(TAG, 1000 / (now - timeStamp) + "");
+//        Log.i(TAG, 1000 / (now - timeStamp) + ", " + scrollOffsetX);
 //        timeStamp = now;
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
@@ -236,9 +233,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     }
 
     void setOrientationAngle(float roll, float pitch) {
-//        orientationOffsetXBackup = (float) (biasRange * Math.sin(Math.toRadians(roll)));
-//        orientationOffsetYBackup = (float) (biasRange * Math.sin(Math.toRadians(pitch)));
-        orientationOffsetQueue.offer(new float[]{(float) (biasRange * Math.sin(Math.toRadians(roll))), (float) (biasRange * Math.sin(Math.toRadians(pitch)))});
+        orientationOffsetX = (float) (biasRange * Math.sin(roll));
+        orientationOffsetY = (float) (biasRange * Math.sin(pitch));
+//        orientationOffsetQueue.offer(new float[]{(float) (biasRange * Math.sin(Math.toRadians(roll))), (float) (biasRange * Math.sin(Math.toRadians(pitch)))});
     }
 
     void setIsDefaultWallpaper(int isDefault) {
@@ -267,16 +264,16 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 //        stopTransition();
         boolean needRefresh = false;
 //        Log.i(TAG, orientationOffsetQueue.size() + ", " + scrollOffsetXQueue.size());
-        if (!orientationOffsetQueue.isEmpty()) {
-            orientationOffsetBackup = orientationOffsetQueue.poll();
-        }
-        if (Math.abs(currentOrientationOffsetX - orientationOffsetBackup[0]) > .0001
-                || Math.abs(currentOrientationOffsetY - orientationOffsetBackup[1]) > .0001) {
+//        if (!orientationOffsetQueue.isEmpty()) {
+//            orientationOffsetBackup = orientationOffsetQueue.poll();
+//        }
+        if (Math.abs(currentOrientationOffsetX - orientationOffsetX) > .0001
+                || Math.abs(currentOrientationOffsetY - orientationOffsetY) > .0001) {
 //        Log.i(TAG,Math.abs(currentOrientationOffsetX - goalOffsetX)+" "+Math.abs(currentOrientationOffsetY - goalOffsetY));
-            float tinyOffsetX = (orientationOffsetBackup[0] - currentOrientationOffsetX)
-                    / delay;
-            float tinyOffsetY = (orientationOffsetBackup[1] - currentOrientationOffsetY)
-                    / delay;
+            float tinyOffsetX = (orientationOffsetX - currentOrientationOffsetX)
+                    / (transitionStep * delay);
+            float tinyOffsetY = (orientationOffsetY - currentOrientationOffsetY)
+                    / (transitionStep * delay);
             currentOrientationOffsetX += tinyOffsetX;
             currentOrientationOffsetY += tinyOffsetY;
             needRefresh = true;

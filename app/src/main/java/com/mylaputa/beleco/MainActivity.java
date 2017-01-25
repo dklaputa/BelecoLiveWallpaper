@@ -1,5 +1,6 @@
 package com.mylaputa.beleco;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -7,15 +8,16 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.mylaputa.beleco.sensor.RotationSensor;
 import com.mylaputa.beleco.utils.TypefaceUtil;
 
 /**
  * Created by dklap on 1/22/2017.
  */
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements RotationSensor.Callback {
 
-
+    RotationSensor rotationSensor;
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -42,7 +44,17 @@ public class MainActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (MyViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        rotationSensor = new RotationSensor(this, 20);
+    }
 
+    protected void onResume() {
+        super.onResume();
+        rotationSensor.register();
+    }
+
+    protected void onPause() {
+        super.onPause();
+        rotationSensor.unrigister();
     }
 
     @Override
@@ -53,6 +65,16 @@ public class MainActivity extends AppCompatActivity {
 
     void setCurrentPage(int page) {
         mViewPager.setCurrentItem(page, true);
+    }
+
+    @Override
+    public void setOrientationAngle(float[] values) {
+
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
     }
 
     /**

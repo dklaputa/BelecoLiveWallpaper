@@ -19,7 +19,7 @@
         android:layout_height="match_parent">
 
         <TableLayout
-
+            android:id="@+id/table"
             android:layout_width="300dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
@@ -41,10 +41,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:max="10"
+                    android:max="20"
                     android:paddingBottom="@dimen/settings_item_vertical_margin"
                     android:paddingTop="@dimen/settings_item_vertical_margin"
-                    android:progress="5" />
+                    android:progress="10" />
             </TableRow>
 
             <TableRow
@@ -63,10 +63,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:max="10"
+                    android:max="20"
                     android:paddingBottom="@dimen/settings_item_vertical_margin"
                     android:paddingTop="@dimen/settings_item_vertical_margin"
-                    android:progress="5" />
+                    android:progress="10" />
 
 
             </TableRow>

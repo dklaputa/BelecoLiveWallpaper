@@ -16,12 +16,12 @@
         android:id="@+id/seekBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:max="6"
-        android:progress="2" 
+        android:max="20"
+        android:paddingBottom="4dp"
         android:paddingLeft="24dp"
         android:paddingRight="24dp"
         android:paddingTop="4dp"
-        android:paddingBottom="4dp" />
+        android:progress="10" />
 
     <TextView
         android:id="@+id/message"

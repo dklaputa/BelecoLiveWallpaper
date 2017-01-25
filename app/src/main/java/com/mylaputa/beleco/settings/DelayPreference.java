@@ -15,12 +15,12 @@ import com.mylaputa.beleco.utils.Preferences.Preference;
 
 class DelayPreference extends MyDialogPreference {
     private final Context mContext;
-    private int mValue = 5;
+    private int mValue = 10;
 
     public DelayPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        mValue = getPersistedInt(5);
+        mValue = getPersistedInt(10);
     }
 
     public DelayPreference(Context context) {
@@ -70,7 +70,7 @@ class DelayPreference extends MyDialogPreference {
         final TextView messageTextView = (TextView) v
                 .findViewById(R.id.message);
         messageTextView.setText(R.string.setting6_description);
-        seekBar.setMax(10);
+        seekBar.setMax(20);
         seekBar.setProgress(mValue);
         textView.setText(mValue + "x");
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
