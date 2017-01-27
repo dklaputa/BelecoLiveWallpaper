@@ -54,12 +54,14 @@ public class MainActivity extends AppCompatActivity implements RotationSensor.Ca
 
     protected void onPause() {
         super.onPause();
-        rotationSensor.unrigister();
+        rotationSensor.unregister();
     }
 
     @Override
     protected void onDestroy() {
         TypefaceUtil.clearCache();
+        rotationSensor.unregister();
+        rotationSensor.destroy();
         super.onDestroy();
     }
 
@@ -74,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements RotationSensor.Ca
 
     @Override
     public Context getContext() {
-        return this;
+        return getApplicationContext();
     }
 
     /**

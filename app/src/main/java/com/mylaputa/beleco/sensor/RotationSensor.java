@@ -24,7 +24,6 @@ public class RotationSensor implements SensorEventListener {
     }
 
     public void register() {
-        this.callback = callback;
         if (listenerRegistered) return;
         sensorManager
                 .registerListener(this, sensorManager
@@ -33,11 +32,16 @@ public class RotationSensor implements SensorEventListener {
         listenerRegistered = true;
     }
 
-    public void unrigister() {
+    public void unregister() {
         if (!listenerRegistered) return;
         sensorManager.unregisterListener(this);
         listenerRegistered = false;
         initialRotation = null;
+    }
+
+    public void destroy() {
+        callback = null;
+        sensorManager = null;
     }
 
     @Override

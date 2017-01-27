@@ -30,6 +30,10 @@ public class LiveWallpaperService extends GLWallpaperService {
         return new MyEngine();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
     class MyEngine extends GLEngine implements LiveWallpaperRenderer.Callbacks, RotationSensor.Callback {
         // private SharedPreferences preference;
@@ -54,7 +58,7 @@ public class LiveWallpaperService extends GLWallpaperService {
             // Get sensormanager and register as listener.
             setEGLContextClientVersion(2);
             setEGLConfigChooser(8, 8, 8, 0, 0, 0);
-            renderer = new LiveWallpaperRenderer(LiveWallpaperService.this, this);
+            renderer = new LiveWallpaperRenderer(LiveWallpaperService.this.getApplicationContext(), this);
             setRenderer(renderer);
             setRenderMode(RENDERMODE_WHEN_DIRTY);
 
@@ -103,7 +107,7 @@ public class LiveWallpaperService extends GLWallpaperService {
                         if (pm.isPowerSaveMode()) {
                             savePowerMode = true;
                             if (isVisible()) {
-                                rotationSensor.unrigister();
+                                rotationSensor.unregister();
                                 renderer.setOrientationAngle(0, 0);
                             }
 //                            changeSensorFrequency(10);
@@ -128,7 +132,8 @@ public class LiveWallpaperService extends GLWallpaperService {
         @Override
         public void onDestroy() {
             // Unregister this as listener
-            rotationSensor.unrigister();
+            rotationSensor.unregister();
+            rotationSensor.destroy();
             if (Build.VERSION.SDK_INT >= 21) {
                 unregisterReceiver(powerSaverChangeReceiver);
             }
@@ -159,7 +164,7 @@ public class LiveWallpaperService extends GLWallpaperService {
                     renderer.startTransition();
                 } else {
                     Log.i(TAG, "VisibilityFalse");
-                    rotationSensor.unrigister();
+                    rotationSensor.unregister();
                     renderer.stopTransition();
 //                    renderer.clearOrientationOffsetQueue();
                     // mHandler.removeCallbacks(drawTarget);
@@ -213,7 +218,7 @@ public class LiveWallpaperService extends GLWallpaperService {
 
         @Override
         public Context getContext() {
-            return LiveWallpaperService.this;
+            return LiveWallpaperService.this.getApplicationContext();
         }
 
         class WallpaperPreferenceObserver extends ContentObserver {

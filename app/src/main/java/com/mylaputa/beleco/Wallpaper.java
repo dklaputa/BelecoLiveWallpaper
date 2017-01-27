@@ -113,7 +113,7 @@ class Wallpaper {
                     if (leftoverHeight > 0) {
                         rect.offset(0, -mTileSize + leftoverHeight);
                     }
-                    rect.intersect(0, 0, mWidth, mHeight);
+//                    rect.intersect(0, 0, mWidth, mHeight);
                     Bitmap subBitmap = Bitmap.createBitmap(bitmap, rect.left,
                             rect.top, rect.width(), rect.height());
                     mTextureHandles[y * mCols + x] = GLUtil

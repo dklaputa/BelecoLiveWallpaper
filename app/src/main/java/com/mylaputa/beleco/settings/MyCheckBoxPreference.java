@@ -27,11 +27,8 @@ public abstract class MyCheckBoxPreference extends CheckBoxPreference {
         } else {
             contentValues.put(getContentKey(), 0);
         }
-        if (mContext.getContentResolver().update(getUri(), contentValues, null,
-                null) != 0) {
-            return true;
-        }
-        return false;
+        return mContext.getContentResolver().update(getUri(), contentValues, null,
+                null) != 0;
     }
 
     @Override

@@ -44,7 +44,7 @@ public class LiveWallPaperPreferenceFragment extends PreferenceFragment {
 
     @Override
     public void onDestroy() {
-        Log.d("LiveWallPaperPreferenceFragment", "onDestroy");
+        Log.d("PreferenceFragment", "onDestroy");
         // ws.onActivityDestroy();
         // ws = null;
         li.onActivityDestory();

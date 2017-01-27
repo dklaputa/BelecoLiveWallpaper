@@ -88,7 +88,6 @@ abstract class BaseConfigChooser implements GLSurfaceView.EGLConfigChooser {
         protected int mDepthSize;
         protected int mStencilSize;
         private int[] mValue;
-
         public ComponentSizeChooser(int redSize, int greenSize, int blueSize, int alphaSize, int depthSize,
                                     int stencilSize, int eglContextClientVersion) {
             super(new int[]{EGL10.EGL_RED_SIZE, redSize, EGL10.EGL_GREEN_SIZE, greenSize, EGL10.EGL_BLUE_SIZE,
@@ -108,13 +107,13 @@ abstract class BaseConfigChooser implements GLSurfaceView.EGLConfigChooser {
             EGLConfig closestConfig = null;
             int closestDistance = 1000;
             for (EGLConfig config : configs) {
-                int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE, 0);
-                int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE, 0);
+                int d = findConfigAttrib(egl, display, config, EGL10.EGL_DEPTH_SIZE);
+                int s = findConfigAttrib(egl, display, config, EGL10.EGL_STENCIL_SIZE);
                 if (d >= mDepthSize && s >= mStencilSize) {
-                    int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE, 0);
-                    int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE, 0);
-                    int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE, 0);
-                    int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE, 0);
+                    int r = findConfigAttrib(egl, display, config, EGL10.EGL_RED_SIZE);
+                    int g = findConfigAttrib(egl, display, config, EGL10.EGL_GREEN_SIZE);
+                    int b = findConfigAttrib(egl, display, config, EGL10.EGL_BLUE_SIZE);
+                    int a = findConfigAttrib(egl, display, config, EGL10.EGL_ALPHA_SIZE);
                     int distance = Math.abs(r - mRedSize) + Math.abs(g - mGreenSize) + Math.abs(b - mBlueSize)
                             + Math.abs(a - mAlphaSize);
                     if (distance < closestDistance) {
@@ -126,17 +125,18 @@ abstract class BaseConfigChooser implements GLSurfaceView.EGLConfigChooser {
             return closestConfig;
         }
 
-        private int findConfigAttrib(EGL10 egl, EGLDisplay display, EGLConfig config, int attribute, int defaultValue) {
+        private int findConfigAttrib(EGL10 egl, EGLDisplay display, EGLConfig config, int attribute) {
 
             if (egl.eglGetConfigAttrib(display, config, attribute, mValue)) {
                 return mValue[0];
             }
-            return defaultValue;
+            return 0;
         }
     }
 
     /**
      * This class will choose a supported surface as close to RGB565 as possible, with or without a depth buffer.
+     *
      */
     public static class SimpleEGLConfigChooser extends ComponentSizeChooser {
         public SimpleEGLConfigChooser(boolean withDepthBuffer, int eglContextClientVersion) {

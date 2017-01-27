@@ -90,6 +90,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             wallpaper.destroy();
 //        mHandler.removeCallbacksAndMessages(null);
         stopTransition();
+        scheduler.shutdown();
         mCallbacks = null;
     }
 
@@ -311,7 +312,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             }
 
         }
-//        System.gc();
+        System.gc();
         Log.d(TAG, "loadTexture");
     }
 

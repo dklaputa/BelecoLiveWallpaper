@@ -23,11 +23,8 @@ public abstract class MyDialogPreference extends DialogPreference {
     protected boolean persistInt(int value) {
         ContentValues contentValues = new ContentValues();
         contentValues.put(getContentKey(), value);
-        if (mContext.getContentResolver().update(getUri(), contentValues, null,
-                null) != 0) {
-            return true;
-        }
-        return false;
+        return mContext.getContentResolver().update(getUri(), contentValues, null,
+                null) != 0;
     }
 
     @Override

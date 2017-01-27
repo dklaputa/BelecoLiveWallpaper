@@ -512,7 +512,7 @@ class GLThread extends Thread {
     // End of member variables protected by the sGLThreadManager monitor.
 
     private GLSurfaceView.Renderer mRenderer;
-    private ArrayList<Runnable> mEventQueue = new ArrayList<Runnable>();
+    private ArrayList<Runnable> mEventQueue = new ArrayList<>();
     private EglHelper mEglHelper;
 
     GLThread(GLSurfaceView.Renderer renderer, GLSurfaceView.EGLConfigChooser chooser, GLSurfaceView.EGLContextFactory contextFactory,
@@ -794,7 +794,8 @@ class GLThread extends Thread {
     /**
      * Queue an "event" to be run on the GL rendering thread.
      *
-     * @param r the runnable to be run on the GL rendering thread.
+     * @param r
+     * the runnable to be run on the GL rendering thread.
      */
     public void queueEvent(Runnable r) {
         synchronized (this) {
