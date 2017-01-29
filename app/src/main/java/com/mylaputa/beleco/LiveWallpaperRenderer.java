@@ -220,7 +220,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         }
     }
 
-    void setOffsetMode(boolean scrollMode) {
+    void setScrollMode(boolean scrollMode) {
         this.scrollMode = scrollMode;
         if (scrollMode)
 //            scrollOffsetX = scrollOffsetXBackup;
@@ -252,8 +252,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     void setBiasRange(int multiples) {
         // Log.d("tinyOffset", tinyOffsetX + ", " + tinyOffsetY);
         biasRange = multiples * MAX_BIAS_RANGE + 0.03f;
-        // mCallbacks.requestRender();
         preCalculate();
+        if (mCallbacks != null) mCallbacks.requestRender();
     }
 
     void setDelay(int delay) {

@@ -1,7 +1,9 @@
 package com.mylaputa.beleco;
 
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.SeekBar;
 import android.widget.TableLayout;
 
 import com.mylaputa.beleco.utils.CustomTypefaceSpan;
@@ -22,11 +26,15 @@ import com.mylaputa.beleco.utils.TypefaceUtil;
  */
 
 public class LiveWallpaperSettingsFragment extends Fragment {
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.settings, container, false);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences.Editor editor = preferences.edit();
 
         Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
 //        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_back));
@@ -58,13 +66,73 @@ public class LiveWallpaperSettingsFragment extends Fragment {
         });
         if (Build.VERSION.SDK_INT >= 21) {
             TableLayout table = (TableLayout) view.findViewById(R.id.table);
-            CheckBox powerSaver = new CheckBox(getContext());
-            powerSaver.setText(R.string.power_save);
-            powerSaver.setChecked(true);
-            table.addView(powerSaver);
-            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) powerSaver.getLayoutParams();
+            CheckBox checkBoxPowerSaver = new CheckBox(getContext());
+            checkBoxPowerSaver.setText(R.string.power_save);
+            checkBoxPowerSaver.setChecked(preferences.getBoolean("power_saver", true));
+            checkBoxPowerSaver.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    editor.putBoolean("power_saver", isChecked);
+                    editor.apply();
+                }
+            });
+            table.addView(checkBoxPowerSaver);
+            ViewGroup.MarginLayoutParams marginParams = (ViewGroup.MarginLayoutParams) checkBoxPowerSaver.getLayoutParams();
             marginParams.setMargins(0, (int) (getResources().getDimension(R.dimen.settings_item_vertical_margin) / getResources().getDisplayMetrics().density), 0, (int) (getResources().getDimension(R.dimen.settings_item_vertical_margin) / getResources().getDisplayMetrics().density));
         }
+
+
+        SeekBar seekBarRange = (SeekBar) view.findViewById(R.id.seekBarRange);
+        seekBarRange.setProgress(preferences.getInt("range", 10));
+        seekBarRange.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    editor.putInt("range", progress);
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        SeekBar seekBarDelay = (SeekBar) view.findViewById(R.id.seekBarDelay);
+        seekBarDelay.setProgress(preferences.getInt("delay", 10));
+        seekBarDelay.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    editor.putInt("delay", progress);
+                    editor.apply();
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        CheckBox checkBoxScroll = (CheckBox) view.findViewById(R.id.checkBoxScroll);
+        checkBoxScroll.setChecked(preferences.getBoolean("scroll", true));
+        checkBoxScroll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                editor.putBoolean("scroll", isChecked);
+                editor.apply();
+            }
+        });
         return view;
     }
 

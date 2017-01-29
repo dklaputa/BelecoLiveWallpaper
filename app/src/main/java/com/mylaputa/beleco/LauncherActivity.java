@@ -93,7 +93,7 @@ public class LauncherActivity extends LiveWallPaperPreferenceActivity {
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        if (item.getItemId() == R.id.set_wallpaper) {
+        if (item.getItemId() == R.id.done) {
             wallpaperChooser();
             return true;
         }

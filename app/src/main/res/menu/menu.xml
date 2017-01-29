@@ -7,7 +7,7 @@
         android:title="@string/menu_3"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/set_wallpaper"
+        android:id="@+id/done"
         android:icon="@drawable/ic_action_done"
         android:title="@string/menu_1"
         app:showAsAction="ifRoom" />
