@@ -50,7 +50,6 @@ public class LiveWallpaperSettingsFragment extends Fragment {
     private SharedPreferences.Editor editor;
     private TabLayout tabLayoutPictureChoose;
     private Cube cube;
-    private float cubeAngleRange;
 
     @Nullable
     @Override
@@ -193,7 +192,6 @@ public class LiveWallpaperSettingsFragment extends Fragment {
                 editor.apply();
             }
         });
-        cubeAngleRange = (float) Math.PI / 6;
         cube = (Cube) view.findViewById(R.id.cube);
         return view;
     }
@@ -285,7 +283,7 @@ public class LiveWallpaperSettingsFragment extends Fragment {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onMessageEvent(LiveWallpaperRenderer.BiasChangeEvent event) {
-        cube.setRotationAngle(event.getY() * cubeAngleRange, event.getX() * cubeAngleRange);
+        cube.setRotation(event.getY(), event.getX());
     }
 
     @Override
