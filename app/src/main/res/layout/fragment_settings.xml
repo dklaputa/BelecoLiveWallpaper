@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".MainActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.mylaputa.beleco.Cube
+                    android:id="@+id/cube"
+                    android:layout_width="@dimen/cube_size"
+                    android:layout_height="@dimen/cube_size"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginBottom="@dimen/cube_margin_bottom"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/color_divider"/>
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/settings_item_horizontal_margin"
+                    android:layout_marginRight="@dimen/settings_item_horizontal_margin"
+                    android:stretchColumns="1">
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/settings_item_height"
+                            android:layout_gravity="end"
+                            android:gravity="center_vertical"
+                            android:text="@string/picture"
+                            android:textStyle="bold"/>
+
+                        <android.support.design.widget.TabLayout
+                            android:id="@+id/tabLayoutPictureChoose"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            app:tabBackground="?selectableItemBackgroundBorderless"
+                            app:tabIndicatorColor="@color/color_transparent"
+                            app:tabSelectedTextColor="@color/color_accent">
+
+                            <android.support.design.widget.TabItem
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/picture_default"/>
+
+                            <android.support.design.widget.TabItem
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/picture_custom"/>
+                        </android.support.design.widget.TabLayout>
+
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/settings_item_height"
+                            android:layout_gravity="end"
+                            android:gravity="center_vertical"
+                            android:text="@string/range"
+                            android:textStyle="bold"/>
+
+                        <SeekBar
+                            android:id="@+id/seekBarRange"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:max="20"
+                            android:progress="10"/>
+                    </TableRow>
+
+                    <TableRow>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="@dimen/settings_item_height"
+                            android:layout_gravity="end"
+                            android:gravity="center_vertical"
+                            android:text="@string/delay"
+                            android:textStyle="bold"/>
+
+                        <SeekBar
+                            android:id="@+id/seekBarDelay"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_vertical"
+                            android:max="20"
+                            android:progress="10"/>
+                    </TableRow>
+
+                    <CheckBox
+                        android:id="@+id/checkBoxScroll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:checked="true"
+                        android:gravity="center_vertical"
+                        android:text="@string/scroll"/>
+
+                    <CheckBox
+                        android:id="@+id/checkBoxPower"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/settings_item_height"
+                        android:checked="true"
+                        android:gravity="center_vertical"
+                        android:text="@string/power_save"
+                        android:visibility="gone"/>
+                </TableLayout>
+            </LinearLayout>
+        </ScrollView>
+    </FrameLayout>
+</LinearLayout>

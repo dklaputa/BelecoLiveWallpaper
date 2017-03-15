@@ -35,7 +35,8 @@ public class MyViewPager extends ViewPager {
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
         if (position < 1) {
-            getRootView().setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset, Color.argb(153, 35, 35, 35), Color.argb(200, 0, 0, 0)));
+            getRootView().setBackgroundColor((Integer) argbEvaluator.evaluate(positionOffset,
+                    Color.argb(153, 35, 35, 35), Color.argb(200, 0, 0, 0)));
         } else {
             getRootView().setBackgroundColor(Color.argb(200, 0, 0, 0));
         }

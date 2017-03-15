@@ -43,11 +43,14 @@
 
             Many thanks to these open source projects:<br><br>
 
+            <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a></b><br>
+            <i>by Roman Nurik</i><br><br>
+
             <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a></b><br>
             <i>by Robert Green, Mark F. Guerra, and others</i><br><br>
 
-            <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a></b><br>
-            <i>by Roman Nurik</i><br><br>
+            <b><a href="https://github.com/greenrobot/EventBus">EventBus</a></b><br>
+            <i>by greenrobot</i><br><br>
 
             Thanks to this beautiful icon pack:<br><br>
 
@@ -56,6 +59,9 @@
         ]]>
     </string>
 
+    <string name="picture">PICTURE</string>
+    <string name="picture_default">Default</string>
+    <string name="picture_custom">Custom</string>
     <string name="range">RANGE</string>
     <string name="delay">SPEED</string>
     <string name="scroll">Wallpaper scrolling</string>

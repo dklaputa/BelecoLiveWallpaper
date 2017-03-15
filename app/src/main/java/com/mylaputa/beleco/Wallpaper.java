@@ -210,7 +210,7 @@ class Wallpaper {
         if (mTextureHandles != null) {
             GLES20.glDeleteTextures(mTextureHandles.length, mTextureHandles, 0);
             GLUtil.checkGlError("Destroy picture");
-            mTextureHandles = null;
+//            mTextureHandles = null;
         }
     }
 }

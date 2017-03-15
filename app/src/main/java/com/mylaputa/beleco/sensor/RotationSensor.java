@@ -6,6 +6,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
+import org.greenrobot.eventbus.EventBus;
+
 /**
  * Created by dklap on 1/25/2017.
  */
@@ -13,22 +15,18 @@ import android.hardware.SensorManager;
 public class RotationSensor implements SensorEventListener {
     private int sampleRate;
     private SensorManager sensorManager;
-    private Callback callback;
     private float[] initialRotation;
     private boolean listenerRegistered = false;
 
-    public RotationSensor(Callback callback, int sampleRate) {
+    public RotationSensor(Context context, int sampleRate) {
         this.sampleRate = sampleRate;
-        this.callback = callback;
-        sensorManager = (SensorManager) callback.getContext().getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
     public void register() {
         if (listenerRegistered) return;
-        sensorManager
-                .registerListener(this, sensorManager
-                                .getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR),
-                        1000000 / sampleRate);
+        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor
+                .TYPE_ROTATION_VECTOR), 1000000 / sampleRate);
         listenerRegistered = true;
     }
 
@@ -37,11 +35,6 @@ public class RotationSensor implements SensorEventListener {
         sensorManager.unregisterListener(this);
         listenerRegistered = false;
         initialRotation = null;
-    }
-
-    public void destroy() {
-        callback = null;
-        sensorManager = null;
     }
 
     @Override
@@ -54,8 +47,7 @@ public class RotationSensor implements SensorEventListener {
         }
         float[] change = new float[3];
         SensorManager.getAngleChange(change, r, initialRotation);
-        callback.setOrientationAngle(change);
-//        Log.i("Sensor", values[0] + ", " + values[1] + ", " + values[2]);
+        EventBus.getDefault().post(new SensorChangedEvent(change));
     }
 
     @Override
@@ -63,9 +55,15 @@ public class RotationSensor implements SensorEventListener {
 
     }
 
-    public interface Callback {
-        void setOrientationAngle(float[] values);
+    public static class SensorChangedEvent {
+        private float[] angle;
 
-        Context getContext();
+        SensorChangedEvent(float[] angle) {
+            this.angle = angle;
+        }
+
+        public float[] getAngle() {
+            return angle;
+        }
     }
 }

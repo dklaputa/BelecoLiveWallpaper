@@ -27,7 +27,6 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final static int REFRESH_RATE = 60;
     private final static float MAX_BIAS_RANGE = 0.003f;
     private final static String TAG = "LiveWallpaperRenderer";
-//    private final Handler mHandler = new Handler();
 
     private final float[] mMVPMatrix = new float[16];
     private final float[] mProjectionMatrix = new float[16];
@@ -37,13 +36,11 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             Executors.newScheduledThreadPool(1);
     private final float transitionStep = REFRESH_RATE / LiveWallpaperService.SENSOR_RATE;
     private Wallpaper wallpaper;
-    private float scrollStep = 0f;
-    //private float scrollOffsetXDup = 0.5f;// , offsetY = 0.5f;
+    private float scrollStep = 1f;
     private Queue<Float> scrollOffsetXQueue = new CircularFifoQueue<>(10);
     private float scrollOffsetX = 0.5f;// , offsetY = 0.5f;
     private float scrollOffsetXBackup = 0.5f;
     private float currentOrientationOffsetX, currentOrientationOffsetY;
-    //    private Queue<float[]> orientationOffsetQueue = new CircularFifoQueue<>(10);
     private float orientationOffsetX, orientationOffsetY;
     private Callbacks mCallbacks;
     private float screenAspectRatio;
@@ -56,26 +53,14 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private final Runnable transition = new Runnable() {
         @Override
         public void run() {
-//            long beginTime, timeTakenMillis, timeLeftMillis;
-//            beginTime = System.nanoTime();
             transitionCal();
-//            timeTakenMillis = (System.nanoTime() - beginTime) / 1000000;
-//            timeLeftMillis = (1000L / REFRESH_RATE) - timeTakenMillis;
-//
-//            // set some kind of minimum to prevent spinning
-//            if (timeLeftMillis < 5) {
-//                timeLeftMillis = 5; // Set a minimum
-//            }
-//            mHandler.postDelayed(this, timeLeftMillis);
         }
     };
     private ScheduledFuture<?> transitionHandle;
     private boolean needsRefreshWallpaper;
-    private int isDefaultWallpaper;
+    private boolean isDefaultWallpaper;
     private float preA;
     private float preB;
-
-//    long timeStamp = 0;
 
     LiveWallpaperRenderer(Context context, Callbacks callbacks) {
 
@@ -85,13 +70,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     void release() {
         // TODO stuff to release
-        // stopTransition();
         if (wallpaper != null)
             wallpaper.destroy();
-//        mHandler.removeCallbacksAndMessages(null);
         stopTransition();
         scheduler.shutdown();
-        mCallbacks = null;
     }
 
     /**
@@ -102,30 +84,20 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         GLES20.glEnable(GLES20.GL_BLEND);
         GLES20.glBlendFuncSeparate(GLES20.GL_SRC_ALPHA,
                 GLES20.GL_ONE_MINUS_SRC_ALPHA, GLES20.GL_ONE, GLES20.GL_ONE);
-        GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        GLES20.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         Wallpaper.initGl();
     }
 
     void startTransition() {
         stopTransition();
-//        mHandler.post(transition);
         transitionHandle =
-                scheduler.scheduleAtFixedRate(transition, 0, 1000 / REFRESH_RATE, TimeUnit.MILLISECONDS);
+                scheduler.scheduleAtFixedRate(transition, 0, 1000 / REFRESH_RATE, TimeUnit
+                        .MILLISECONDS);
     }
 
     void stopTransition() {
-//        mHandler.removeCallbacks(transition);
         if (transitionHandle != null) transitionHandle.cancel(true);
     }
-
-//    void clearOrientationOffsetQueue() {
-//        orientationOffsetQueue.clear();
-//    }
-//
-//    void resetOrientationOffset() {
-//        clearOrientationOffsetQueue();
-//        orientationOffsetQueue.offer(new float[]{0, 0});
-//    }
 
     /**
      * Here we do our drawing
@@ -136,9 +108,6 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
             loadTexture();
             needsRefreshWallpaper = false;
         }
-//        long now = System.currentTimeMillis();
-//        Log.i(TAG, 1000 / (now - timeStamp) + ", " + scrollOffsetX);
-//        timeStamp = now;
         // Draw background color
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
@@ -159,13 +128,10 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         if (scrollStep > 0) {
             if (wallpaperAspectRatio > (1 + 1 / (3 * scrollStep))
                     * screenAspectRatio) {
-                // Log.d(TAG, "11");
                 scrollRange = 1 + 1 / (3 * scrollStep);
             } else if (wallpaperAspectRatio >= screenAspectRatio) {
-                // Log.d(TAG, "12");
                 scrollRange = wallpaperAspectRatio / screenAspectRatio;
             } else {
-                // Log.d(TAG, "13");
                 scrollRange = 1;
             }
         } else {
@@ -175,9 +141,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         preA = screenAspectRatio * (scrollRange - 1);
         // preB = -1f;
         if (screenAspectRatio < 1)
-            preB = -1.0f + biasRange / screenAspectRatio;
+            preB = -1.0f + (biasRange / screenAspectRatio);
         else
-            preB = -1.0f + biasRange * screenAspectRatio;
+            preB = -1.0f + (biasRange * screenAspectRatio);
     }
 
     /**
@@ -191,7 +157,6 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
         screenAspectRatio = (float) width / (float) height;
         screenH = height;
-        needsRefreshWallpaper = true;
 
         GLES20.glViewport(0, 0, width, height);
 
@@ -200,14 +165,15 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         Matrix.frustumM(mProjectionMatrix, 0, -0.1f * screenAspectRatio,
                 0.1f * screenAspectRatio, -0.1f, 0.1f, 0.1f, 2);
 
+        needsRefreshWallpaper = true;
+//        loadTexture();
+        mCallbacks.requestRender();
     }
 
     void setOffset(float offsetX, float offsetY) {
         if (scrollMode) {
             scrollOffsetXBackup = offsetX;
             scrollOffsetXQueue.offer(offsetX);
-//            scrollOffsetX = offsetX;
-//            noScroll = false;
         } else {
             scrollOffsetXBackup = offsetX;
         }
@@ -223,10 +189,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     void setScrollMode(boolean scrollMode) {
         this.scrollMode = scrollMode;
         if (scrollMode)
-//            scrollOffsetX = scrollOffsetXBackup;
             scrollOffsetXQueue.offer(scrollOffsetXBackup);
         else {
-//            scrollOffsetX = 0.5f;
             scrollOffsetXQueue.clear();
             scrollOffsetXQueue.offer(0.5f);
         }
@@ -236,24 +200,20 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     void setOrientationAngle(float roll, float pitch) {
         orientationOffsetX = (float) (biasRange * Math.sin(roll));
         orientationOffsetY = (float) (biasRange * Math.sin(pitch));
-//        orientationOffsetQueue.offer(new float[]{(float) (biasRange * Math.sin(Math.toRadians(roll))), (float) (biasRange * Math.sin(Math.toRadians(pitch)))});
     }
 
-    void setIsDefaultWallpaper(int isDefault) {
+    void setIsDefaultWallpaper(boolean isDefault) {
         isDefaultWallpaper = isDefault;
         needsRefreshWallpaper = true;
+//        loadTexture();
+        mCallbacks.requestRender();
     }
-
-//    void setRefreshRate(int refreshRate) {
-//        this.refreshRate = refreshRate;
-////        transitionStep = refreshRate / LiveWallpaperService.SENSOR_RATE;
-//    }
 
     void setBiasRange(int multiples) {
         // Log.d("tinyOffset", tinyOffsetX + ", " + tinyOffsetY);
         biasRange = multiples * MAX_BIAS_RANGE + 0.03f;
         preCalculate();
-        if (mCallbacks != null) mCallbacks.requestRender();
+        mCallbacks.requestRender();
     }
 
     void setDelay(int delay) {
@@ -261,16 +221,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     }
 
     private void transitionCal() {
-        // Log.d("transitionCal", "transition");
-//        stopTransition();
         boolean needRefresh = false;
-//        Log.i(TAG, orientationOffsetQueue.size() + ", " + scrollOffsetXQueue.size());
-//        if (!orientationOffsetQueue.isEmpty()) {
-//            orientationOffsetBackup = orientationOffsetQueue.poll();
-//        }
         if (Math.abs(currentOrientationOffsetX - orientationOffsetX) > .0001
                 || Math.abs(currentOrientationOffsetY - orientationOffsetY) > .0001) {
-//        Log.i(TAG,Math.abs(currentOrientationOffsetX - goalOffsetX)+" "+Math.abs(currentOrientationOffsetY - goalOffsetY));
             float tinyOffsetX = (orientationOffsetX - currentOrientationOffsetX)
                     / (transitionStep * delay);
             float tinyOffsetY = (orientationOffsetY - currentOrientationOffsetY)
@@ -289,8 +242,9 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private void loadTexture() {
         // Bitmap bitmap = null;
         InputStream is = null;
+        Log.i(TAG, isDefaultWallpaper + "");
         try {
-            if (isDefaultWallpaper == 2) {
+            if (isDefaultWallpaper) {
                 is = mContext.getAssets().open(Constant.DEFAULT);
             } else {
                 is = mContext.openFileInput(Constant.CACHE);
@@ -306,7 +260,6 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }

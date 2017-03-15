@@ -1,91 +1,92 @@
 package com.mylaputa.beleco;
 
-import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.TypedValue;
 
 import com.mylaputa.beleco.sensor.RotationSensor;
 import com.mylaputa.beleco.utils.TypefaceUtil;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by dklap on 1/22/2017.
  */
 
-public class MainActivity extends AppCompatActivity implements RotationSensor.Callback {
-
-    RotationSensor rotationSensor;
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-
+public class MainActivity extends AppCompatActivity {
+    private float biasRange;
     /**
      * The {@link ViewPager} that will host the section contents.
      */
     private MyViewPager mViewPager;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        setContentView(R.layout.activity_main);
+        mSectionsPagerAdapter = new SectionsPagerAdapter
+                (getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
         mViewPager = (MyViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        rotationSensor = new RotationSensor(this, 20);
+
+        biasRange = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources()
+                .getDisplayMetrics());
     }
 
-    protected void onResume() {
-        super.onResume();
-        rotationSensor.register();
-    }
-
-    protected void onPause() {
-        super.onPause();
-        rotationSensor.unregister();
-    }
 
     @Override
     protected void onDestroy() {
         TypefaceUtil.clearCache();
-        rotationSensor.unregister();
-        rotationSensor.destroy();
         super.onDestroy();
     }
 
-    void setCurrentPage(int page) {
-        mViewPager.setCurrentItem(page, true);
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(RotationSensor.SensorChangedEvent event) {
+        float[] values = event.getAngle();
+        if (getResources().getConfiguration().orientation == Configuration
+                .ORIENTATION_LANDSCAPE) {
+            mViewPager.setTranslationX((float) Math.sin(-values[1]) * biasRange);
+            mViewPager.setTranslationY((float) Math.sin(-values[2]) * biasRange);
+        } else {
+            mViewPager.setTranslationX((float) Math.sin(values[2]) * biasRange);
+            mViewPager.setTranslationY((float) Math.sin(-values[1]) * biasRange);
+        }
     }
 
     @Override
-    public void setOrientationAngle(float[] values) {
-
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
-    public Context getContext() {
-        return getApplicationContext();
+    public void onBackPressed() {
+        if (mViewPager.getCurrentItem() != 0) mViewPager.setCurrentItem(0, true);
+        else super.onBackPressed();
     }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    private class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -100,20 +101,7 @@ public class MainActivity extends AppCompatActivity implements RotationSensor.Ca
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
             return 2;
         }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "SECTION 1";
-                case 1:
-                    return "SECTION 2";
-            }
-            return null;
-        }
     }
-
 }
