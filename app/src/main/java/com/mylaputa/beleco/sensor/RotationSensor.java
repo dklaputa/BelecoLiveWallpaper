@@ -6,20 +6,20 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
-import org.greenrobot.eventbus.EventBus;
-
 /**
  * Created by dklap on 1/25/2017.
  */
 
 public class RotationSensor implements SensorEventListener {
     private int sampleRate;
+    private Callback callback;
     private SensorManager sensorManager;
     private float[] initialRotation;
     private boolean listenerRegistered = false;
 
-    public RotationSensor(Context context, int sampleRate) {
+    public RotationSensor(Context context, Callback callback, int sampleRate) {
         this.sampleRate = sampleRate;
+        this.callback = callback;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
     }
 
@@ -47,7 +47,7 @@ public class RotationSensor implements SensorEventListener {
         }
         float[] change = new float[3];
         SensorManager.getAngleChange(change, r, initialRotation);
-        EventBus.getDefault().post(new SensorChangedEvent(change));
+        callback.onSensorChanged(change);
     }
 
     @Override
@@ -55,15 +55,7 @@ public class RotationSensor implements SensorEventListener {
 
     }
 
-    public static class SensorChangedEvent {
-        private float[] angle;
-
-        SensorChangedEvent(float[] angle) {
-            this.angle = angle;
-        }
-
-        public float[] getAngle() {
-            return angle;
-        }
+    public interface Callback {
+        void onSensorChanged(float[] angle);
     }
 }

@@ -17,10 +17,6 @@ import com.mylaputa.beleco.sensor.RotationSensor;
 
 import net.rbgrn.android.glwallpaperservice.GLWallpaperService;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 public class LiveWallpaperService extends GLWallpaperService {
     public static final int SENSOR_RATE = 60;
     private final static String TAG = "LiveWallpaperService";
@@ -31,7 +27,7 @@ public class LiveWallpaperService extends GLWallpaperService {
     }
 
     private class MyEngine extends GLEngine implements LiveWallpaperRenderer.Callbacks,
-            SharedPreferences.OnSharedPreferenceChangeListener {
+            SharedPreferences.OnSharedPreferenceChangeListener, RotationSensor.Callback {
         private SharedPreferences preference;
         private LiveWallpaperRenderer renderer;
         private RotationSensor rotationSensor;
@@ -49,7 +45,7 @@ public class LiveWallpaperService extends GLWallpaperService {
             setRenderer(renderer);
             setRenderMode(RENDERMODE_WHEN_DIRTY);
             rotationSensor = new RotationSensor(LiveWallpaperService.this.getApplicationContext()
-                    , SENSOR_RATE);
+                    , this, SENSOR_RATE);
             preference = PreferenceManager.getDefaultSharedPreferences(LiveWallpaperService.this);
             preference.registerOnSharedPreferenceChangeListener(this);
             renderer.setBiasRange(preference.getInt("range", 10));
@@ -64,7 +60,6 @@ public class LiveWallpaperService extends GLWallpaperService {
         public void onDestroy() {
             // Unregister this as listener
             rotationSensor.unregister();
-            EventBus.getDefault().unregister(this);
             if (Build.VERSION.SDK_INT >= 21) {
                 unregisterReceiver(powerSaverChangeReceiver);
             }
@@ -81,12 +76,10 @@ public class LiveWallpaperService extends GLWallpaperService {
         public void onVisibilityChanged(boolean visible) {
             if (!pauseInSavePowerMode || !savePowerMode) {
                 if (visible) {
-                    EventBus.getDefault().register(this);
                     rotationSensor.register();
                     renderer.startTransition();
                 } else {
                     rotationSensor.unregister();
-                    EventBus.getDefault().unregister(this);
                     renderer.stopTransition();
                 }
             } else {
@@ -111,10 +104,8 @@ public class LiveWallpaperService extends GLWallpaperService {
                             savePowerMode = pm.isPowerSaveMode();
                             if (savePowerMode && isVisible()) {
                                 rotationSensor.unregister();
-                                EventBus.getDefault().unregister(this);
                                 renderer.setOrientationAngle(0, 0);
                             } else if (!savePowerMode && isVisible()) {
-                                EventBus.getDefault().register(this);
                                 rotationSensor.register();
                             }
                         }
@@ -126,14 +117,12 @@ public class LiveWallpaperService extends GLWallpaperService {
                     savePowerMode = pm.isPowerSaveMode();
                     if (savePowerMode && isVisible()) {
                         rotationSensor.unregister();
-                        EventBus.getDefault().unregister(this);
                         renderer.setOrientationAngle(0, 0);
                     }
                 } else {
                     unregisterReceiver(powerSaverChangeReceiver);
                     savePowerMode = pm.isPowerSaveMode();
                     if (savePowerMode && isVisible()) {
-                        EventBus.getDefault().register(this);
                         rotationSensor.register();
                     }
 
@@ -158,15 +147,6 @@ public class LiveWallpaperService extends GLWallpaperService {
             super.requestRender();
         }
 
-        @Subscribe(threadMode = ThreadMode.MAIN)
-        public void onMessageEvent(RotationSensor.SensorChangedEvent event) {
-            float[] values = event.getAngle();
-            if (getResources().getConfiguration().orientation == Configuration
-                    .ORIENTATION_LANDSCAPE)
-                renderer.setOrientationAngle(values[1], values[2]);
-            else renderer.setOrientationAngle(-values[2], values[1]);
-        }
-
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
@@ -187,6 +167,13 @@ public class LiveWallpaperService extends GLWallpaperService {
             }
         }
 
+        @Override
+        public void onSensorChanged(float[] angle) {
+            if (getResources().getConfiguration().orientation == Configuration
+                    .ORIENTATION_LANDSCAPE)
+                renderer.setOrientationAngle(angle[1], angle[2]);
+            else renderer.setOrientationAngle(-angle[2], angle[1]);
+        }
     }
 
 }

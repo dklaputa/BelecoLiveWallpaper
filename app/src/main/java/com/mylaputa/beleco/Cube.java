@@ -56,18 +56,18 @@ public class Cube extends View {
         c.save();
         c.translate(getWidth() / 2, getHeight() / 2);
         int size = getMaxSize();
-        drawLine(c, -size, -size, -size, size, -size, -size, size);
-        drawLine(c, size, -size, -size, size, size, -size, size);
-        drawLine(c, size, size, -size, -size, size, -size, size);
-        drawLine(c, -size, size, -size, -size, -size, -size, size);
-        drawLine(c, -size, -size, size, size, -size, size, size);
-        drawLine(c, size, -size, size, size, size, size, size);
-        drawLine(c, size, size, size, -size, size, size, size);
-        drawLine(c, -size, size, size, -size, -size, size, size);
-        drawLine(c, -size, -size, size, -size, -size, -size, size);
-        drawLine(c, size, -size, size, size, -size, -size, size);
-        drawLine(c, size, size, size, size, size, -size, size);
-        drawLine(c, -size, size, size, -size, size, -size, size);
+        drawLine(c, -1, -1, -1, 1, -1, -1, size);
+        drawLine(c, 1, -1, -1, 1, 1, -1, size);
+        drawLine(c, 1, 1, -1, -1, 1, -1, size);
+        drawLine(c, -1, 1, -1, -1, -1, -1, size);
+        drawLine(c, -1, -1, 1, 1, -1, 1, size);
+        drawLine(c, 1, -1, 1, 1, 1, 1, size);
+        drawLine(c, 1, 1, 1, -1, 1, 1, size);
+        drawLine(c, -1, 1, 1, -1, -1, 1, size);
+        drawLine(c, -1, -1, 1, -1, -1, -1, size);
+        drawLine(c, 1, -1, 1, 1, -1, -1, size);
+        drawLine(c, 1, 1, 1, 1, 1, -1, size);
+        drawLine(c, -1, 1, 1, -1, 1, -1, size);
         c.restore();
     }
 
@@ -91,10 +91,10 @@ public class Cube extends View {
         newz1 = (float) (Math.cos(yrot) * newz1 - Math.sin(yrot) * x1);
         newz2 = (float) (Math.cos(yrot) * newz2 - Math.sin(yrot) * x2);
         // 3D-to-2D projection
-        float startX = 2 * newx1 / (7 - newz1 / cof);//range 3~4
-        float startY = 2 * newy1 / (7 - newz1 / cof);
-        float stopX = 2 * newx2 / (7 - newz2 / cof);
-        float stopY = 2 * newy2 / (7 - newz2 / cof);
+        float startX = 3f * cof * newx1 / (10 + newz1);//range 3~4
+        float startY = 3f * cof * newy1 / (10 + newz1);
+        float stopX = 3f * cof * newx2 / (10 + newz2);
+        float stopY = 3f * cof * newy2 / (10 + newz2);
         c.drawLine(startX, startY, stopX, stopY, mPaint);
     }
 }

@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,7 +23,6 @@ import android.widget.CompoundButton;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
-import com.mylaputa.beleco.sensor.RotationSensor;
 import com.mylaputa.beleco.utils.Constant;
 import com.mylaputa.beleco.utils.CustomTypefaceSpan;
 import com.mylaputa.beleco.utils.TypefaceUtil;
@@ -52,6 +50,7 @@ public class LiveWallpaperSettingsFragment extends Fragment {
     private SharedPreferences.Editor editor;
     private TabLayout tabLayoutPictureChoose;
     private Cube cube;
+    private float cubeAngleRange;
 
     @Nullable
     @Override
@@ -194,6 +193,7 @@ public class LiveWallpaperSettingsFragment extends Fragment {
                 editor.apply();
             }
         });
+        cubeAngleRange = (float) Math.PI / 6;
         cube = (Cube) view.findViewById(R.id.cube);
         return view;
     }
@@ -284,14 +284,8 @@ public class LiveWallpaperSettingsFragment extends Fragment {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(RotationSensor.SensorChangedEvent event) {
-        float[] values = event.getAngle();
-        if (getResources().getConfiguration().orientation == Configuration
-                .ORIENTATION_LANDSCAPE) {
-            cube.setRotationAngle(-values[2], -values[1]);
-        } else {
-            cube.setRotationAngle(-values[1], values[2]);
-        }
+    public void onMessageEvent(LiveWallpaperRenderer.BiasChangeEvent event) {
+        cube.setRotationAngle(event.getY() * cubeAngleRange, event.getX() * cubeAngleRange);
     }
 
     @Override

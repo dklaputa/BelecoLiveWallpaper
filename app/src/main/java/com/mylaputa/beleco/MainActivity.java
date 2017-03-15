@@ -1,6 +1,5 @@
 package com.mylaputa.beleco;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
-import com.mylaputa.beleco.sensor.RotationSensor;
 import com.mylaputa.beleco.utils.TypefaceUtil;
 
 import org.greenrobot.eventbus.EventBus;
@@ -56,16 +54,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(RotationSensor.SensorChangedEvent event) {
-        float[] values = event.getAngle();
-        if (getResources().getConfiguration().orientation == Configuration
-                .ORIENTATION_LANDSCAPE) {
-            mViewPager.setTranslationX((float) Math.sin(-values[1]) * biasRange);
-            mViewPager.setTranslationY((float) Math.sin(-values[2]) * biasRange);
-        } else {
-            mViewPager.setTranslationX((float) Math.sin(values[2]) * biasRange);
-            mViewPager.setTranslationY((float) Math.sin(-values[1]) * biasRange);
-        }
+    public void onMessageEvent(LiveWallpaperRenderer.BiasChangeEvent event) {
+        mViewPager.setTranslationX(-event.getX() * biasRange);
+        mViewPager.setTranslationY(-event.getY() * biasRange);
     }
 
     @Override

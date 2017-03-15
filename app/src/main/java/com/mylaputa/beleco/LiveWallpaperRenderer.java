@@ -11,6 +11,7 @@ import android.util.Log;
 import com.mylaputa.beleco.utils.Constant;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -230,6 +231,8 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
                     / (transitionStep * delay);
             currentOrientationOffsetX += tinyOffsetX;
             currentOrientationOffsetY += tinyOffsetY;
+            EventBus.getDefault().post(new BiasChangeEvent(currentOrientationOffsetX / biasRange,
+                    currentOrientationOffsetY / biasRange));
             needRefresh = true;
         }
         if (!scrollOffsetXQueue.isEmpty()) {
@@ -306,4 +309,20 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
         void requestRender();
     }
 
+    public static class BiasChangeEvent {
+        float x, y;
+
+        public BiasChangeEvent(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public float getX() {
+            return x;
+        }
+
+        public float getY() {
+            return y;
+        }
+    }
 }
