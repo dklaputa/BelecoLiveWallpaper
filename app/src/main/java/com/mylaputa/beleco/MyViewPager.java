@@ -26,7 +26,7 @@ public class MyViewPager extends ViewPager {
 
     private void init() {
         // The majority of the magic happens here
-        setPageTransformer(true, new VerticalPageTransformer());
+        setPageTransformer(true, new PageTransformer());
         // The easiest way to get rid of the overscroll drawing that happens on the left and right
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
@@ -43,7 +43,7 @@ public class MyViewPager extends ViewPager {
         super.onPageScrolled(position, positionOffset, positionOffsetPixels);
     }
 
-    private class VerticalPageTransformer implements ViewPager.PageTransformer {
+    private class PageTransformer implements ViewPager.PageTransformer {
 
         @Override
         public void transformPage(View view, float position) {

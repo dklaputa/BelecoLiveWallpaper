@@ -8,4 +8,6 @@
     <dimen name="introduction_horizontal_margin">24dp</dimen>
     <dimen name="cube_size">88dp</dimen>
     <dimen name="cube_margin">16dp</dimen>
+    <dimen name="activate_button_size">128dp</dimen>
+    <dimen name="activate_button_margin_top">40dp</dimen>
 </resources>

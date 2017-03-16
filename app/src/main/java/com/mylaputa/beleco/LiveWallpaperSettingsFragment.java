@@ -192,11 +192,11 @@ public class LiveWallpaperSettingsFragment extends Fragment {
                         return;
                     } catch (IOException e) {
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), R.string.toast_4,
+                        Toast.makeText(getActivity(), R.string.toast_failed_set_picture,
                                 Toast.LENGTH_LONG).show();
                     }
                 } else {
-                    Toast.makeText(getActivity(), R.string.toast_1,
+                    Toast.makeText(getActivity(), R.string.toast_invalid_pic_path,
                             Toast.LENGTH_LONG).show();
                 }
             }

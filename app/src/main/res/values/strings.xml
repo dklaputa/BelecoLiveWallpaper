@@ -2,38 +2,13 @@
 
     <string name="app_name">Beleco Live Wallpaper</string>
     <string name="app_setting_title" translatable="false">Beleco</string>
-    <string name="setting_category_1">Preferences</string>
-    <string name="setting1_title">Choose wallpaper</string>
-    <string name="setting1_description">Select a picture to make it your wallpaper</string>
-    <string name="setting1_description_1">Default</string>
-    <string name="setting1_description_2">Custom picture…</string>
-    <string name="setting2_title">Scrolling wallpaper</string>
-    <string name="setting2_on">Scrolling</string>
-    <string name="setting2_off">Non-scrolling</string>
-    <string name="setting4_title">Offset range (Parallax effect)</string>
-    <string name="setting4_description">Change the max offset range.\nNote that a large range may cause wallpaper blurred.</string>
-    <string name="setting5_title">Launcher icon</string>
-    <string name="setting5_on">Show</string>
-    <string name="setting5_off">Hide</string>
-    <string name="setting5_dialog">Beleco will be hidden from launcher. You can reopen the configuration later through your home screen wallpaper picker.\nAre you sure you want to continue?</string>
-    <string name="setting5_dialog_OK">Continue</string>
-    <string name="setting5_dialog_Title">Hide icon</string>
-    <string name="setting6_title">Viscous effect</string>
-    <string name="setting6_description">Set the strength of the viscous effect.</string>
-    <string name="setting_category_2">About</string>
-    <string name="setting3_title" translatable="false">Beleco</string>
-    <string name="setting3_description" translatable="false">by ZHOU DK\nE-mail: D.K.laputa@gmail.com</string>
-    <string name="toast_1">Invalid picture path!</string>
-    <string name="toast_3">Setting completed.</string>
-    <string name="toast_4">Setting failed. Please retry!</string>
-    <string name="toast_2">Couldn\'t launch wallpaper chooser. You can still activate Beleco by choosing \"Live Wallpapers\" in your home screen wallpaper picker.</string>
-    <string name="wallpaper_chooser_dialog">It seems that Beleco isn\'t your current wallpaper. Would you like to set it right now?</string>
-    <string name="wallpaper_chooser_dialog_title">Set wallpaper</string>
-    <string name="dialog_OK">OK</string>
-    <string name="dialog_Cancel">Cancel</string>
-    <string name="menu_1">Done</string>
-    <string name="menu_2">Remove ads</string>
-    <string name="menu_3">Select picture</string>
+
+    <string name="toast_sensor_error">Sorry! This device does not support Rotation Vector Sensor.</string>
+    <string name="toast_invalid_pic_path">Invalid picture path!</string>
+    <string name="toast_success">Setting completed.</string>
+    <string name="toast_failed_set_picture">Setting failed. Please retry!</string>
+    <string name="toast_failed_launch_wallpaper_chooser">Couldn\'t launch wallpaper chooser. You can still activate Beleco by choosing \"Live Wallpapers\" in your home screen wallpaper picker.</string>
+
     <string name="about">
         <![CDATA[
             ver 1.03 - Mar 15, 2017<br><br>
@@ -58,9 +33,11 @@
             <i>by Nick Roach</i><br>
         ]]>
     </string>
-    <string name="introduction1">Welcome to Beleco Live Wallpaper!</string>
-    <string name="introduction2">Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.\n
-        It requires the help of rotation sensor to obtain the device\'s rotation angle data in real time. You can check whether your device supports this sensor by rotating the device and seeing whether the cube below changes its perspective.</string>
+    <string name="introduction1">Beleco Live Wallpaper</string>
+    <string name="introduction2">
+        Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.\n
+        Rotation Vector Sensor is required to obtain the device\'s rotation angle data in real time. You can check whether your device supports it by rotating the device and seeing whether the cube below changes its perspective.
+    </string>
     <string name="picture">PICTURE</string>
     <string name="picture_default">Default</string>
     <string name="picture_custom">Custom</string>
@@ -68,4 +45,5 @@
     <string name="delay">SPEED</string>
     <string name="scroll">Wallpaper scrolling</string>
     <string name="power_save">Pause in battery saver mode</string>
+    <string name="activate">ACTIVATE</string>
 </resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="@string/introduction1"-->
+        <!--android:textSize="32sp"-->
+        <!--android:fontFamily="sans-serif-light"/>-->
+
+        <Button
+            android:id="@+id/activate_button"
+            android:layout_width="@dimen/activate_button_size"
+            android:layout_height="@dimen/activate_button_size"
+            android:layout_marginTop="@dimen/activate_button_margin_top"
+            android:background="@drawable/circle"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/activate"
+            android:textColor="#333"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</FrameLayout>

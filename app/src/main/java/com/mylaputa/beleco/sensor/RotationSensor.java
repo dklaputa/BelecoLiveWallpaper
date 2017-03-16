@@ -5,6 +5,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.widget.Toast;
+
+import com.mylaputa.beleco.R;
 
 /**
  * Created by dklap on 1/25/2017.
@@ -14,6 +17,7 @@ public class RotationSensor implements SensorEventListener {
     private int sampleRate;
     private Callback callback;
     private SensorManager sensorManager;
+    private Sensor sensor;
     private float[] initialRotation;
     private boolean listenerRegistered = false;
 
@@ -21,12 +25,15 @@ public class RotationSensor implements SensorEventListener {
         this.sampleRate = sampleRate;
         this.callback = callback;
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+        if (sensor == null)
+            Toast.makeText(context, context.getText(R.string.toast_sensor_error), Toast
+                    .LENGTH_LONG).show();
     }
 
     public void register() {
         if (listenerRegistered) return;
-        sensorManager.registerListener(this, sensorManager.getDefaultSensor(Sensor
-                .TYPE_ROTATION_VECTOR), 1000000 / sampleRate);
+        sensorManager.registerListener(this, sensor, 1000000 / sampleRate);
         listenerRegistered = true;
     }
 

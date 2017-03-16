@@ -1,89 +1,63 @@
 package com.mylaputa.beleco;
 
+import android.app.WallpaperManager;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.TypedValue;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by dklap on 1/22/2017.
  */
 
 public class MainActivity extends AppCompatActivity {
-    private float biasRange;
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    private MyViewPager mViewPager;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    boolean intro;
+    WallpaperManager wm;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mSectionsPagerAdapter = new SectionsPagerAdapter
-                (getSupportFragmentManager());
-
-        mViewPager = (MyViewPager) findViewById(R.id.container);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-
-        biasRange = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources()
-                .getDisplayMetrics());
+        wm = WallpaperManager.getInstance(this);
+        if (savedInstanceState == null) {
+            if (wm.getWallpaperInfo() == null || !wm.getWallpaperInfo().getPackageName().equals(this
+                    .getPackageName())) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, new
+                        IntroductionFragment()).commit();
+                intro = true;
+            } else {
+                getSupportFragmentManager().beginTransaction().replace(R.id.container, new
+                        MainFragment()).commit();
+                intro = false;
+            }
+        }
     }
 
     @Override
-    public void onStart() {
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean("intro", intro);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        intro = savedInstanceState.getBoolean("intro");
+    }
+
+    @Override
+    protected void onStart() {
         super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onMessageEvent(LiveWallpaperRenderer.BiasChangeEvent event) {
-        mViewPager.setTranslationX(-event.getX() * biasRange);
-        mViewPager.setTranslationY(-event.getY() * biasRange);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mViewPager.getCurrentItem() != 0) mViewPager.setCurrentItem(0, true);
-        else super.onBackPressed();
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    private class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 0)
-                return new LiveWallpaperSettingsFragment();
-            else return new LiveWallpaperAboutFragment();
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
+        if (intro && wm.getWallpaperInfo() != null && wm.getWallpaperInfo().getPackageName()
+                .equals(this.getPackageName())) {
+            getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim
+                    .fragment_enter, R.anim.fragment_exit).replace(R.id.container, new
+                    MainFragment()).commit();
+            intro = false;
+        } else if (!intro && (wm.getWallpaperInfo() == null || !wm.getWallpaperInfo()
+                .getPackageName().equals(this.getPackageName()))) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, new
+                    IntroductionFragment()).commit();
+            intro = true;
         }
     }
 }
