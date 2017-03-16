@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -26,13 +25,9 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 
 /**
  * Created by dklap on 1/22/2017.
@@ -209,43 +204,12 @@ public class LiveWallpaperSettingsFragment extends Fragment {
 
     public InputStream openUri(Uri uri) {
         if (uri == null) return null;
-        String scheme = uri.getScheme();
-        if (scheme == null) return null;
-        if ("content".equals(scheme))
-            try {
-                return getActivity().getContentResolver().openInputStream(uri);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        else if ("file".equals(scheme)) {
-            List<String> segments = uri.getPathSegments();
-            if (segments != null && segments.size() > 1 && "android_asset".equals(segments.get(0)
-            )) {
-                AssetManager assetManager = getActivity().getAssets();
-                StringBuilder assetPath = new StringBuilder();
-                for (int i = 1; i < segments.size(); i++) {
-                    if (i > 1) {
-                        assetPath.append("/");
-                    }
-                    assetPath.append(segments.get(i));
-                }
-                try {
-                    return assetManager.open(assetPath.toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } else {
-                try {
-                    return new FileInputStream(new File(uri.getPath()));
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        } else
+        try {
+            return getActivity().getContentResolver().openInputStream(uri);
+        } catch (Exception e) {
+            e.printStackTrace();
             return null;
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

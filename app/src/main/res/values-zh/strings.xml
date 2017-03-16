@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Beleco动态壁纸</string>
+
+    <string name="toast_sensor_error">抱歉！此设备不支持旋转矢量传感器</string>
+    <string name="toast_invalid_pic_path">无效的图片路径！</string>
+    <string name="toast_success">已设置</string>
+    <string name="toast_failed_set_picture">图片设置失败！</string>
+    <string name="toast_failed_launch_wallpaper_chooser">无法打开壁纸选择界面。请在主屏手动将Beleco设为您的壁纸</string>
+
+    <string name="about">
+        <![CDATA[
+            版本 1.03 - 2017年3月15日<br><br>
+
+            作者 <b>ZHOU DK</b>.<br>
+            源代码参见<a href="https://github.com/dklaputa/BelecoLiveWallpaper">GitHub</a><br><br>
+
+            特别感谢以下开源项目:<br><br>
+
+            <b><a href="https://github.com/romannurik/muzei/">Muzei Live Wallpaper</a></b><br>
+            <i>作者 Roman Nurik</i><br><br>
+
+            <b><a href="https://github.com/GLWallpaperService/GLWallpaperService">GLWallpaperService</a></b><br>
+            <i>作者 Robert Green, Mark F. Guerra, and others</i><br><br>
+
+            <b><a href="https://github.com/greenrobot/EventBus">EventBus</a></b><br>
+            <i>作者 greenrobot</i><br><br>
+
+            本应用图标来自:<br><br>
+
+            <b><a href="http://www.elegantthemes.com/blog/freebie-of-the-week/beautiful-flat-icons-for-free/">Beautiful Flat Icons</a></b><br>
+            <i>作者 Nick Roach</i><br>
+        ]]>
+    </string>
+    <string name="introduction1">Beleco动态壁纸</string>
+    <string name="introduction2">
+        Beleco动态壁纸能够通过轻微偏移壁纸的位置，产生一个视差效果。\n
+        实现过程需要从旋转矢量传感器实时获取设备的旋转角度数据。您可以通过旋转设备，并检查下面的立方体是否随之改变其透视角度，来判断您的设备是否支持此传感器。
+    </string>
+    <string name="picture">壁纸选择</string>
+    <string name="picture_default">默认</string>
+    <string name="picture_custom">自定义</string>
+    <string name="range">移动范围</string>
+    <string name="delay">移动速度</string>
+    <string name="scroll">壁纸多屏滚动</string>
+    <string name="power_save">节电模式下暂停</string>
+    <string name="activate">设置壁纸</string>
+</resources>

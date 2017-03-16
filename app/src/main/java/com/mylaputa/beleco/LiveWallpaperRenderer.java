@@ -13,6 +13,7 @@ import com.mylaputa.beleco.utils.Constant;
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Queue;
@@ -245,28 +246,29 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
     private void loadTexture() {
         // Bitmap bitmap = null;
         InputStream is = null;
-        Log.i(TAG, isDefaultWallpaper + "");
-        try {
-            if (isDefaultWallpaper) {
-                is = mContext.getAssets().open(Constant.DEFAULT);
-            } else {
+        if (!isDefaultWallpaper) {
+            try {
                 is = mContext.openFileInput(Constant.CACHE);
+            } catch (FileNotFoundException e) {
+                isDefaultWallpaper = true;
             }
-            if (wallpaper != null)
-                wallpaper.destroy();
-            wallpaper = new Wallpaper(cropBitmap(is));
-            preCalculate();
-        } catch (Exception e) {
+        }
+        if (isDefaultWallpaper) {
+            try {
+                is = mContext.getAssets().open(Constant.DEFAULT);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (is == null) return;
+        if (wallpaper != null)
+            wallpaper.destroy();
+        wallpaper = new Wallpaper(cropBitmap(is));
+        preCalculate();
+        try {
+            is.close();
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-
         }
         System.gc();
         Log.d(TAG, "loadTexture");
@@ -274,6 +276,7 @@ class LiveWallpaperRenderer implements GLSurfaceView.Renderer {
 
     private Bitmap cropBitmap(InputStream is) {
         Bitmap src = BitmapFactory.decodeStream(is);
+        if (src == null) return null;
         final float width = src.getWidth();
         final float height = src.getHeight();
         wallpaperAspectRatio = width / height;
