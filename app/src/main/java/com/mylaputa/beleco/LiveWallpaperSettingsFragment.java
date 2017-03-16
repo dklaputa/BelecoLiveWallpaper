@@ -12,9 +12,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +21,6 @@ import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.mylaputa.beleco.utils.Constant;
-import com.mylaputa.beleco.utils.CustomTypefaceSpan;
-import com.mylaputa.beleco.utils.TypefaceUtil;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -60,34 +55,6 @@ public class LiveWallpaperSettingsFragment extends Fragment {
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         editor = preferences.edit();
-
-        Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-//        toolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_action_done));
-//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                getActivity().finish();
-//            }
-//        });
-
-        final SpannableString spannableString = new SpannableString(
-                getResources().getString(R.string.app_setting_title));
-
-        spannableString.setSpan(
-                new CustomTypefaceSpan(TypefaceUtil.getAndCache(getContext(),
-                        "Roboto-Thin.ttf")), 0, spannableString.length(),
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        // spannableString.setSpan(new AbsoluteSizeSpan(24, true), 0,
-        // spannableString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        toolbar.setTitle(spannableString);
-
-//        toolbar.inflateMenu(R.menu.menu);
-//        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                return false;
-//            }
-//        });
         if (Build.VERSION.SDK_INT >= 21) {
             CheckBox checkBoxPowerSaver = (CheckBox) view.findViewById(R.id.checkBoxPower);
             checkBoxPowerSaver.setVisibility(View.VISIBLE);

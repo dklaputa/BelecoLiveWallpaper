@@ -34,9 +34,9 @@
     <string name="menu_1">Done</string>
     <string name="menu_2">Remove ads</string>
     <string name="menu_3">Select picture</string>
-    <string name="about" translatable="false">
+    <string name="about">
         <![CDATA[
-            Beleco Live Wallpaper<br>ver 1.03 - Jan 22, 2017<br><br>
+            ver 1.03 - Mar 15, 2017<br><br>
 
             Made by <b>ZHOU DK</b>.<br>
             Source code in <a href="https://github.com/dklaputa/BelecoLiveWallpaper">GitHub</a><br><br>
@@ -58,7 +58,9 @@
             <i>by Nick Roach</i><br>
         ]]>
     </string>
-
+    <string name="introduction1">Welcome to Beleco Live Wallpaper!</string>
+    <string name="introduction2">Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.\n
+        It requires the help of rotation sensor to obtain the device\'s rotation angle data in real time. You can check whether your device supports this sensor by rotating the device and seeing whether the cube below changes its perspective.</string>
     <string name="picture">PICTURE</string>
     <string name="picture_default">Default</string>
     <string name="picture_custom">Custom</string>

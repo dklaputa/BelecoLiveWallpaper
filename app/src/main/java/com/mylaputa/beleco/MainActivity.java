@@ -8,8 +8,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 
-import com.mylaputa.beleco.utils.TypefaceUtil;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
@@ -38,13 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         biasRange = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources()
                 .getDisplayMetrics());
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        TypefaceUtil.clearCache();
-        super.onDestroy();
     }
 
     @Override

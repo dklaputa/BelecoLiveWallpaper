@@ -10,4 +10,12 @@
         <item name="android:windowBackground">@color/color_transparent</item>
         <item name="android:windowShowWallpaper">true</item>
     </style>
+
+    <style name="TitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+
+    <style name="TabTextAppearance" parent="TextAppearance.Design.Tab">
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
 </resources>

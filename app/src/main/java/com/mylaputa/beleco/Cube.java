@@ -2,7 +2,9 @@ package com.mylaputa.beleco;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.DashPathEffect;
 import android.graphics.Paint;
+import android.graphics.Path;
 import android.support.annotation.FloatRange;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -21,6 +23,8 @@ public class Cube extends View {
     private float yrot;
     private Point[] points;
     private Line[] lines;
+    private Path path = new Path();
+    private Path pathHide = new Path();
 
     public Cube(Context context) {
         this(context, null, 0);
@@ -33,7 +37,7 @@ public class Cube extends View {
     public Cube(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         // Create a Paint to draw the lines for our cube
-        mPaint.setColor(0xffffffff);
+        mPaint.setColor(0xb3ffffff);
         mPaint.setAntiAlias(true);
         mPaint.setStrokeWidth(3);
         mPaint.setStrokeCap(Paint.Cap.ROUND);
@@ -43,6 +47,7 @@ public class Cube extends View {
         mPaintHide.setStrokeWidth(2);
         mPaintHide.setStrokeCap(Paint.Cap.ROUND);
         mPaintHide.setStyle(Paint.Style.STROKE);
+        mPaintHide.setPathEffect(new DashPathEffect(new float[]{5, 10}, 0));
         angleRange = (float) Math.PI / 6;
         points = new Point[]{new Point(-1, -1, 1), new Point(-1, 1, 1), new Point(1, 1, 1),
                 new Point(1, -1, 1), new Point(-1, -1, -1), new Point(-1, 1, -1), new Point(1, 1,
@@ -68,8 +73,12 @@ public class Cube extends View {
         for (Point p : points)
             p.projectPoint(size);
         findHidePoint();
+        path.reset();
+        pathHide.reset();
         for (Line l : lines)
-            l.draw(canvas);
+            l.addToPath(path, pathHide);
+        canvas.drawPath(pathHide, mPaintHide);
+        canvas.drawPath(path, mPaint);
         canvas.restore();
     }
 
@@ -145,13 +154,23 @@ public class Cube extends View {
                     () - start.getNewY() * end.getNewX()) / (start.getNewX() - end.getNewX());
         }
 
-        void draw(Canvas canvas) {
-            if (start.isHind() || end.isHind())
-                canvas.drawLine(start.getNewX(), start.getNewY(), end.getNewX(), end.getNewY(),
-                        mPaintHide);
-            else
-                canvas.drawLine(start.getNewX(), start.getNewY(), end.getNewX(), end.getNewY(),
-                        mPaint);
+        //        void draw(Canvas canvas) {
+//            Path path = new Path();
+//            path.moveTo(start.getNewX(), start.getNewY());
+//            path.lineTo(end.getNewX(), end.getNewY());
+//            if (start.isHind() || end.isHind())
+//                canvas.drawPath(path, mPaintHide);
+//            else
+//                canvas.drawPath(path, mPaint);
+//        }
+        void addToPath(Path pathFront, Path pathBehind) {
+            if (start.isHind() || end.isHind()) {
+                pathBehind.moveTo(start.getNewX(), start.getNewY());
+                pathBehind.lineTo(end.getNewX(), end.getNewY());
+            } else {
+                pathFront.moveTo(start.getNewX(), start.getNewY());
+                pathFront.lineTo(end.getNewX(), end.getNewY());
+            }
         }
     }
 }

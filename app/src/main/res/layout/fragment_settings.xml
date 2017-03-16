@@ -10,7 +10,9 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:title="@string/app_setting_title"
+        app:titleTextAppearance="@style/TitleTextAppearance"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -26,16 +28,33 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_horizontal"-->
+                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+                <!--android:text="@string/introduction1"/>-->
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/introduction_horizontal_margin"
+                    android:layout_marginRight="@dimen/introduction_horizontal_margin"
+                    android:fontFamily="sans-serif-condensed"
+                    android:text="@string/introduction2"/>
+
                 <com.mylaputa.beleco.Cube
                     android:id="@+id/cube"
                     android:layout_width="@dimen/cube_size"
                     android:layout_height="@dimen/cube_size"
                     android:layout_gravity="center_horizontal"
-                    android:layout_marginBottom="@dimen/cube_margin_bottom"/>
+                    android:layout_margin="@dimen/cube_margin"/>
 
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginBottom="@dimen/divider_vertical_margin"
+                    android:layout_marginTop="@dimen/divider_vertical_margin"
                     android:background="@color/color_divider"/>
 
                 <TableLayout
@@ -62,7 +81,8 @@
                             android:layout_height="match_parent"
                             app:tabBackground="?selectableItemBackgroundBorderless"
                             app:tabIndicatorColor="@color/color_transparent"
-                            app:tabSelectedTextColor="@color/color_accent">
+                            app:tabSelectedTextColor="@color/color_accent"
+                            app:tabTextAppearance="@style/TabTextAppearance">
 
                             <android.support.design.widget.TabItem
                                 android:layout_width="wrap_content"
@@ -91,8 +111,9 @@
                             android:id="@+id/seekBarRange"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
                             android:max="20"
+                            android:maxHeight="@dimen/settings_item_height"
+                            android:minHeight="@dimen/settings_item_height"
                             android:progress="10"/>
                     </TableRow>
 
@@ -110,8 +131,9 @@
                             android:id="@+id/seekBarDelay"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:layout_gravity="center_vertical"
                             android:max="20"
+                            android:maxHeight="@dimen/settings_item_height"
+                            android:minHeight="@dimen/settings_item_height"
                             android:progress="10"/>
                     </TableRow>
 
@@ -120,6 +142,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/settings_item_height"
                         android:checked="true"
+                        android:fontFamily="sans-serif-light"
                         android:gravity="center_vertical"
                         android:text="@string/scroll"/>
 
@@ -128,6 +151,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="@dimen/settings_item_height"
                         android:checked="true"
+                        android:fontFamily="sans-serif-light"
                         android:gravity="center_vertical"
                         android:text="@string/power_save"
                         android:visibility="gone"/>

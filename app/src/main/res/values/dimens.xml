@@ -4,6 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="settings_item_height">56dp</dimen>
     <dimen name="settings_item_horizontal_margin">24dp</dimen>
-    <dimen name="cube_size">80dp</dimen>
-    <dimen name="cube_margin_bottom">48dp</dimen>
+    <dimen name="divider_vertical_margin">8dp</dimen>
+    <dimen name="introduction_horizontal_margin">24dp</dimen>
+    <dimen name="cube_size">88dp</dimen>
+    <dimen name="cube_margin">16dp</dimen>
 </resources>
