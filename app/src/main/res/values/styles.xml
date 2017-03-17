@@ -1,13 +1,16 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorPrimaryDark">@color/color_transparent</item>
-        <item name="colorPrimary">@color/color_transparent</item>
+    <style name="AppThemeBase" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimaryDark">@android:color/transparent</item>
+        <item name="colorPrimary">@android:color/transparent</item>
         <item name="colorAccent">@color/color_accent</item>
     </style>
 
+    <style name="AppTheme" parent="AppThemeBase">
+    </style>
+
     <style name="AppTheme.MainActivity">
-        <item name="android:windowBackground">@color/color_transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowShowWallpaper">true</item>
     </style>
 

@@ -32,12 +32,12 @@ public class LiveWallpaperAboutFragment extends Fragment {
             }
         });
 
-        final TextView aboutTextView = (TextView) view.findViewById(R.id.textView);
-        final SpannableString spannableString = new SpannableString(Html.fromHtml(getResources()
+        TextView textViewAbout = (TextView) view.findViewById(R.id.textView);
+        SpannableString spannableString = new SpannableString(Html.fromHtml(getResources()
                 .getString(R.string.about)));
-        aboutTextView.setText(spannableString);
+        textViewAbout.setText(spannableString);
 
-        aboutTextView.setMovementMethod(new LinkMovementMethod());
+        textViewAbout.setMovementMethod(new LinkMovementMethod());
         return view;
     }
 

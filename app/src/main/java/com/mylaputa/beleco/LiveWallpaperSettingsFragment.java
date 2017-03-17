@@ -11,12 +11,15 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.text.Html;
+import android.text.SpannableString;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mylaputa.beleco.utils.Constant;
@@ -47,6 +50,10 @@ public class LiveWallpaperSettingsFragment extends Fragment {
             Bundle savedInstanceState) {
 //        return super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+        TextView textViewIntroduction = (TextView) view.findViewById(R.id.introduction);
+        SpannableString spannableString = new SpannableString(Html.fromHtml(getResources()
+                .getString(R.string.introduction2)));
+        textViewIntroduction.setText(spannableString);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getContext());
         editor = preferences.edit();
@@ -64,10 +71,8 @@ public class LiveWallpaperSettingsFragment extends Fragment {
             });
         }
 
-        tabLayoutPictureChoose = (TabLayout) view.findViewById(R.id
-                .tabLayoutPictureChoose);
-        oldPicture = preferences.getInt
-                ("default_picture", 0);
+        tabLayoutPictureChoose = (TabLayout) view.findViewById(R.id.tabLayoutPictureChoose);
+        oldPicture = preferences.getInt("default_picture", 0);
         TabLayout.Tab tab = tabLayoutPictureChoose.getTabAt(oldPicture == 0 ? 0 : 1);
         if (tab != null) tab.select();
         tabLayoutPictureChoose.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {

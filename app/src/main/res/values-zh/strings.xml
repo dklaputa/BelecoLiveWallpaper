@@ -13,7 +13,7 @@
         <![CDATA[
             版本 1.03 - 2017年3月15日<br><br>
 
-            作者 <b>ZHOU DK</b>.<br>
+            作者 <b>dklaputa</b>.<br>
             源代码参见<a href="https://github.com/dklaputa/BelecoLiveWallpaper">GitHub</a><br><br>
 
             特别感谢以下开源项目:<br><br>
@@ -33,10 +33,12 @@
             <i>作者 Nick Roach</i><br>
         ]]>
     </string>
-    <string name="introduction1">Beleco动态壁纸</string>
+    <string name="introduction1">欢迎</string>
     <string name="introduction2">
-        Beleco动态壁纸能够通过轻微偏移壁纸的位置，产生一个视差效果。\n
-        实现过程需要从旋转矢量传感器实时获取设备的旋转角度数据。您可以通过旋转设备，并检查下面的立方体是否随之改变其透视角度，来判断您的设备是否支持此传感器。
+        <![CDATA[
+            Beleco动态壁纸通过轻微偏移壁纸的位置，来产生一种视差效果。<br>
+            *实现过程需要从<b>旋转矢量传感器</b>实时获取设备的旋转角度数据。您可以通过旋转设备，并检查下面的立方体是否随之改变其透视角度，来判断您的设备是否支持此传感器。
+        ]]>
     </string>
     <string name="picture">壁纸选择</string>
     <string name="picture_default">默认</string>

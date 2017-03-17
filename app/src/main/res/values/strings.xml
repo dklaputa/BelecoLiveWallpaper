@@ -14,7 +14,7 @@
         <![CDATA[
             ver 1.03 - Mar 15, 2017<br><br>
 
-            Made by <b>ZHOU DK</b>.<br>
+            Made by <b>dklaputa</b>.<br>
             Source code in <a href="https://github.com/dklaputa/BelecoLiveWallpaper">GitHub</a><br><br>
 
             Many thanks to these open source projects:<br><br>
@@ -34,10 +34,12 @@
             <i>by Nick Roach</i><br>
         ]]>
     </string>
-    <string name="introduction1">Beleco Live Wallpaper</string>
+    <string name="introduction1">Welcome!</string>
     <string name="introduction2">
-        Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.\n
-        Rotation Vector Sensor is required to obtain the device\'s rotation angle data in real time. You can check whether your device supports it by rotating the device and seeing whether the cube below changes its perspective.
+        <![CDATA[
+            Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.<br>
+            *<b>Rotation Vector Sensor</b> is required to obtain the device\'s rotation angle data in real time. You can check whether your device supports it by rotating the device and seeing whether the cube below changes its perspective.
+        ]]>
     </string>
     <string name="picture">PICTURE</string>
     <string name="picture_default">Default</string>

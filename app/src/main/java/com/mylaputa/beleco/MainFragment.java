@@ -30,7 +30,7 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
-        MyViewPager mViewPager = (MyViewPager) inflater.inflate(R.layout.fragment_main,
+        mViewPager = (MyViewPager) inflater.inflate(R.layout.fragment_main,
                 container, false);
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter
                 (getChildFragmentManager());

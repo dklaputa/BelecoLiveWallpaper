@@ -12,12 +12,13 @@
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
-        <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="@string/introduction1"-->
-        <!--android:textSize="32sp"-->
-        <!--android:fontFamily="sans-serif-light"/>-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-light"
+            android:text="@string/introduction1"
+            android:textColor="@android:color/white"
+            android:textSize="36sp"/>
 
         <Button
             android:id="@+id/activate_button"

@@ -28,20 +28,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <!--<TextView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center_horizontal"-->
-                <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
-                <!--android:text="@string/introduction1"/>-->
-
                 <TextView
+                    android:id="@+id/introduction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/introduction_horizontal_margin"
                     android:layout_marginRight="@dimen/introduction_horizontal_margin"
-                    android:fontFamily="sans-serif-condensed"
-                    android:text="@string/introduction2"/>
+                    android:fontFamily="sans-serif-condensed"/>
 
                 <com.mylaputa.beleco.Cube
                     android:id="@+id/cube"
@@ -80,7 +73,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             app:tabBackground="?selectableItemBackgroundBorderless"
-                            app:tabIndicatorColor="@color/color_transparent"
+                            app:tabIndicatorColor="@android:color/transparent"
                             app:tabSelectedTextColor="@color/color_accent"
                             app:tabTextAppearance="@style/TabTextAppearance">
 
