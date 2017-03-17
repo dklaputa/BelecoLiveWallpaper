@@ -38,7 +38,7 @@
     <string name="introduction2">
         <![CDATA[
             Beleco Live Wallpaper can produce a parallax effect by slightly offsetting the position of the wallpaper.<br>
-            *<b>Rotation Vector Sensor</b> is required to obtain the device\'s rotation angle data in real time. You can check whether your device supports it by rotating the device and seeing whether the cube below changes its perspective.
+            *It is required to obtain the device\'s rotation angle data from <b>Rotation Vector Sensor</b> in real time. You can check whether your device supports the sensor by rotating the device and seeing whether the cube below changes its perspective.
         ]]>
     </string>
     <string name="picture">PICTURE</string>
