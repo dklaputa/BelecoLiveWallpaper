@@ -3,7 +3,7 @@ Beleco Live Wallpaper is a parallax effect wallpaper which will slightly offset 
 
 *Rotation Vector Sensor is required.
 
-<img src="https://github.com/dklaputa/BelecoLiveWallpaper/raw/master/Images/1.png" width="45%" /> <img src="https://github.com/dklaputa/BelecoLiveWallpaper/raw/master/Images/1.png" width="45%" />
+<img src="https://github.com/dklaputa/BelecoLiveWallpaper/raw/master/Images/1.png" width="45%" /> <img src="https://github.com/dklaputa/BelecoLiveWallpaper/raw/master/Images/2.png" width="45%" />
 
 Submit issues on https://github.com/dklaputa/BelecoLiveWallpaper/issues.
 
