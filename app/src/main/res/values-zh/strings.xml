@@ -5,7 +5,6 @@
 
     <string name="toast_sensor_error">抱歉！此设备不支持旋转矢量传感器</string>
     <string name="toast_invalid_pic_path">无效的图片路径！</string>
-    <string name="toast_success">已设置</string>
     <string name="toast_failed_set_picture">图片设置失败！</string>
     <string name="toast_failed_launch_wallpaper_chooser">无法打开壁纸选择界面。请在主屏手动将Beleco设为您的壁纸</string>
 

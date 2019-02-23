@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.mylaputa.beleco"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 28
         versionCode 6
         versionName "1.1"
     }
@@ -20,11 +20,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'org.apache.commons:commons-collections4:4.1'
-    compile 'com.android.support:recyclerview-v7:25.3.0'
-    compile 'org.greenrobot:eventbus:3.0.0'
-    compile 'com.android.support:design:25.3.0'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    testImplementation 'junit:junit:4.12'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
+    implementation 'org.apache.commons:commons-collections4:4.3'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0-alpha02'
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'com.google.android.material:material:1.1.0-alpha03'
 }
